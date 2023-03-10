@@ -13,4 +13,4 @@ set "fullstamp=%YYYY%%MM%%DD%%HH%%Min%%Sec%.local.%compName%"
 cd %cd%
 git add .
 git commit -m "%fullstamp%- [%commit%]"
-git push
+git push origin master
