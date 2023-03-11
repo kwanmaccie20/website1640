@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "wdio"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
@@ -15,12 +16,21 @@
     "@mantine/hooks": "^6.0.1",
     "@mantine/next": "^6.0.1",
     "@tabler/icons-react": "^2.9.0",
+    "@wdio/cli": "^8.5.9",
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@types/node": "^18.15.0",
+    "@types/webdriverio": "^5.0.0",
+    "@wdio/local-runner": "^8.5.9",
+    "@wdio/mocha-framework": "^8.5.6",
+    "@wdio/spec-reporter": "^8.4.0",
+    "chromedriver": "^111.0.0",
     "eslint": "^8.35.0",
-    "eslint-config-next": "^13.2.4"
+    "eslint-config-next": "^13.2.4",
+    "wdio-chromedriver-service": "^8.1.1",
+    "webdriverio": "^8.5.9"
   }
 }
