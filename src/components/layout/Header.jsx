@@ -130,39 +130,39 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const mockdata = [
-  {
-    icon: IconCode,
-    title: "Open source",
-    description: "This Pokémon’s cry is very loud and distracting",
-    link: "/document",
-  },
-  {
-    icon: IconCoin,
-    title: "Free for everyone",
-    description: "The fluid of Smeargle’s tail secretions changes",
-  },
-  {
-    icon: IconBook,
-    title: "Documentation",
-    description: "Yanma is capable of seeing 360 degrees without",
-  },
-  {
-    icon: IconFingerprint,
-    title: "Security",
-    description: "The shell’s rounded shape and the grooves on its.",
-  },
-  {
-    icon: IconChartPie3,
-    title: "Analytics",
-    description: "This Pokémon uses its flying ability to quickly chase",
-  },
-  {
-    icon: IconNotification,
-    title: "Notifications",
-    description: "Combusken battles with the intensely hot flames it spews",
-  },
-];
+// const mockdata = [
+//   {
+//     icon: IconCode,
+//     title: "Open source",
+//     description: "This Pokémon’s cry is very loud and distracting",
+//     link: "/document",
+//   },
+//   {
+//     icon: IconCoin,
+//     title: "Free for everyone",
+//     description: "The fluid of Smeargle’s tail secretions changes",
+//   },
+//   {
+//     icon: IconBook,
+//     title: "Documentation",
+//     description: "Yanma is capable of seeing 360 degrees without",
+//   },
+//   {
+//     icon: IconFingerprint,
+//     title: "Security",
+//     description: "The shell’s rounded shape and the grooves on its.",
+//   },
+//   {
+//     icon: IconChartPie3,
+//     title: "Analytics",
+//     description: "This Pokémon uses its flying ability to quickly chase",
+//   },
+//   {
+//     icon: IconNotification,
+//     title: "Notifications",
+//     description: "Combusken battles with the intensely hot flames it spews",
+//   },
+// ];
 
 export function HeaderMegaMenu() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
@@ -174,30 +174,30 @@ export function HeaderMegaMenu() {
   const { role } = useCurrentUserRole();
   const active = router.asPath;
 
-  const links = mockdata.map((item) => (
-    <UnstyledButton
-      component={Link}
-      href={item?.link ?? "#"}
-      className={cx(classes.subLink, {
-        [classes.linkActive]: active == item?.link,
-      })}
-      key={item.title}
-    >
-      <Group noWrap align="flex-start">
-        <ThemeIcon size={34} variant="default" radius="md">
-          <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
-        </ThemeIcon>
-        <div>
-          <Text size="sm" fw={500}>
-            {item.title}
-          </Text>
-          <Text size="xs" color="dimmed">
-            {item.description}
-          </Text>
-        </div>
-      </Group>
-    </UnstyledButton>
-  ));
+  // const links = mockdata.map((item) => (
+  //   <UnstyledButton
+  //     component={Link}
+  //     href={item?.link ?? "#"}
+  //     className={cx(classes.subLink, {
+  //       [classes.linkActive]: active == item?.link,
+  //     })}
+  //     key={item.title}
+  //   >
+  //     <Group noWrap align="flex-start">
+  //       <ThemeIcon size={34} variant="default" radius="md">
+  //         <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
+  //       </ThemeIcon>
+  //       <div>
+  //         <Text size="sm" fw={500}>
+  //           {item.title}
+  //         </Text>
+  //         <Text size="xs" color="dimmed">
+  //           {item.description}
+  //         </Text>
+  //       </div>
+  //     </Group>
+  //   </UnstyledButton>
+  // ));
 
   return (
     <Box>
