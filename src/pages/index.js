@@ -1,5 +1,7 @@
-import Layout from "@/components/Layout";
-import { Button } from "@mantine/core";
+import Layout from "@/components/layout/Layout";
+import { headerLinks } from "@/constants/headerLinks";
+import { useCurrentUserRole } from "@/hooks/currentUser";
+import { Button, Select, Text } from "@mantine/core";
 import Head from "next/head";
 
 export default function Home() {
@@ -11,9 +13,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Layout>
-        <Button>Hello</Button>
-      </Layout>
+      <Layout>content</Layout>
     </>
   );
 }

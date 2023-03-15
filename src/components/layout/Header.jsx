@@ -1,3 +1,5 @@
+import { headerLinks } from "@/constants/headerLinks";
+import { useCurrentUserRole } from "@/hooks/currentUser";
 import {
   createStyles,
   Header,
@@ -25,6 +27,8 @@ import {
   useMantineColorScheme,
   Stack,
   Title,
+  Menu,
+  MediaQuery,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -43,23 +47,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import Logo from "./Logo";
 
-import { Montserrat } from "next/font/google";
-
-const montserrat = Montserrat({ subsets: ["latin", "vietnamese"] });
 const useStyles = createStyles((theme) => ({
   link: {
     display: "flex",
     alignItems: "center",
     borderRadius: theme.radius.sm,
-    margin: `0 ${rem(4)}`,
+    // margin: `0 ${rem(4)}`,
+    marginRight: "5px",
     padding: `${rem(8)} ${rem(12)}`,
     textDecoration: "none",
     color: theme.colorScheme === "dark" ? theme.white : theme.black,
     fontWeight: 500,
     fontSize: theme.fontSizes.sm,
 
-    [theme.fn.smallerThan("sm")]: {
+    [theme.fn.smallerThan("md")]: {
       height: rem(42),
       display: "flex",
       alignItems: "center",
@@ -115,13 +118,13 @@ const useStyles = createStyles((theme) => ({
   },
 
   hiddenMobile: {
-    [theme.fn.smallerThan("sm")]: {
+    [theme.fn.smallerThan("md")]: {
       display: "none",
     },
   },
 
   hiddenDesktop: {
-    [theme.fn.largerThan("sm")]: {
+    [theme.fn.largerThan("md")]: {
       display: "none",
     },
   },
@@ -161,14 +164,15 @@ const mockdata = [
   },
 ];
 
-export function HeaderMegaMenu({ role }) {
+export function HeaderMegaMenu() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const { classes, theme, cx } = useStyles();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const router = useRouter();
-  const [active] = useState(router.asPath);
+  const { role } = useCurrentUserRole();
+  const active = router.asPath;
 
   const links = mockdata.map((item) => (
     <UnstyledButton
@@ -197,10 +201,9 @@ export function HeaderMegaMenu({ role }) {
 
   return (
     <Box>
-      <Header height={64} px="md">
+      <Header height={64}>
         <Container size="lg">
           <Group position="apart" sx={{ height: "100%" }}>
-            {/* <Image src={"/logo.png"} width={100} height={100} alt="logo" /> */}
             <div
               style={{
                 height: "64px",
@@ -208,24 +211,25 @@ export function HeaderMegaMenu({ role }) {
                 alignItems: "center",
               }}
             >
-              <Title ff={montserrat.style.fontFamily} order={3}>
-                NEXT University
-              </Title>
+              <Logo />
             </div>
             <Group
               sx={{ height: "100%" }}
               spacing={0}
               className={classes.hiddenMobile}
             >
-              <UnstyledButton
-                component={Link}
-                href="/"
-                className={cx(classes.link, {
-                  [classes.linkActive]: active == "/",
-                })}
-              >
-                {role == "staff" && "Home"}
-              </UnstyledButton>
+              {headerLinks[role].map((link, index) => (
+                <UnstyledButton
+                  key={index}
+                  component={Link}
+                  href={link.href}
+                  className={cx(classes.link, {
+                    [classes.linkActive]: active == link.href,
+                  })}
+                >
+                  {link.label}
+                </UnstyledButton>
+              ))}
               {/* <HoverCard
                 width={600}
                 position="bottom"
@@ -280,21 +284,14 @@ export function HeaderMegaMenu({ role }) {
                   </div>
                 </HoverCard.Dropdown>
               </HoverCard> */}
-              <UnstyledButton
-                component={Link}
-                href="/"
-                className={cx(classes.link, {
-                  [classes.linkActive]: active == "/campaign",
-                })}
-              >
-                Campaign
-              </UnstyledButton>
             </Group>
 
             <Group>
-              <ActionIcon variant="light" radius="xl" size="lg">
-                <IconBell strokeWidth={1.5} />{" "}
-              </ActionIcon>
+              {role == "staff" && (
+                <ActionIcon variant="light" radius="xl" size="lg">
+                  <IconBell strokeWidth={1.5} />{" "}
+                </ActionIcon>
+              )}
               <ActionIcon
                 onClick={() => toggleColorScheme()}
                 variant="light"
@@ -307,14 +304,19 @@ export function HeaderMegaMenu({ role }) {
                   <IconSun strokeWidth={1.5} />
                 )}
               </ActionIcon>
-              <Badge
-                size="lg"
-                radius="sm"
-                py="md"
-                className={classes.hiddenMobile}
-              >
-                Truong Duy
-              </Badge>
+              <MediaQuery smallerThan={"md"} styles={{ display: "none" }}>
+                <Menu width={300} shadow="lg" withArrow>
+                  <Menu.Target>
+                    <ActionIcon>
+                      <Avatar radius="xl" />
+                    </ActionIcon>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Item>Truong Duy Nguyen</Menu.Item>
+                    <Menu.Item color={"red"}>Logout</Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+              </MediaQuery>
               <Burger
                 opened={drawerOpened}
                 onClick={toggleDrawer}
@@ -330,17 +332,12 @@ export function HeaderMegaMenu({ role }) {
         onClose={closeDrawer}
         size="100%"
         padding="md"
-        title={<Image src={"./vercel.svg"} width={64} height={64} alt="logo" />}
+        title={<Logo />}
         className={classes.hiddenDesktop}
-        zIndex={1000000}
       >
-        <ScrollArea h={`calc(100vh - ${rem(60)})`} mx="-md">
+        <ScrollArea h={"100%"}>
           <Divider color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"} />
-
-          <a href="#" className={classes.link}>
-            Home
-          </a>
-          <UnstyledButton className={classes.link} onClick={toggleLinks}>
+          {/* <UnstyledButton className={classes.link} onClick={toggleLinks}>
             <Center inline>
               <Box component="span" mr={5}>
                 Features
@@ -348,26 +345,41 @@ export function HeaderMegaMenu({ role }) {
               <IconChevronDown size={16} color={theme.fn.primaryColor()} />
             </Center>
           </UnstyledButton>
-          <Collapse in={linksOpened} pl="lg">
-            {links}
-          </Collapse>
-          <a href="#" className={classes.link}>
-            Learn
-          </a>
-          <a href="#" className={classes.link}>
-            Academy
-          </a>
-
+          <Collapse in={linksOpened}>{links}</Collapse> */}
+          <UnstyledButton
+            component={Link}
+            href="#"
+            className={cx(classes.link, {
+              [classes.linkActive]: active == "#",
+            })}
+          >
+            Truong Duy Nguyen
+          </UnstyledButton>
+          {headerLinks[role].map((link, index) => (
+            <UnstyledButton
+              key={index}
+              component={Link}
+              href={link.href}
+              className={cx(classes.link, {
+                [classes.linkActive]: active == link.href,
+              })}
+            >
+              {link.label}
+            </UnstyledButton>
+          ))}
           <Divider
             my="sm"
             color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
           />
-
-          <Stack position="center" grow pb="xl" px="md">
-            <Badge size="lg" radius="sm" py="md">
-              Truong Duy
-            </Badge>
-          </Stack>
+          <UnstyledButton
+            component={Link}
+            href="/logout"
+            className={cx(classes.link, {
+              [classes.linkActive]: active == "#",
+            })}
+          >
+            <Text color={"red"}>Logout</Text>
+          </UnstyledButton>
         </ScrollArea>
       </Drawer>
     </Box>
