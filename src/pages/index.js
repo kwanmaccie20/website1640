@@ -1,7 +1,6 @@
-import Layout from "@/components/layout/Layout";
-import { headerLinks } from "@/constants/headerLinks";
-import { useCurrentUserRole } from "@/hooks/currentUser";
-import { Button, Select, Text } from "@mantine/core";
+import IdeaCard from "@/components/IdeaCard";
+import { mockIdeas } from "@/constants/mockIdeas";
+import { Group, Stack, Text, TextInput } from "@mantine/core";
 import Head from "next/head";
 
 export default function Home() {
@@ -13,7 +12,15 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1>dsgdhfjgj</h1>
+      <Group mb="sm">
+        <Text>What&#39;s on your mind?</Text>
+        <TextInput label="Filter" />
+      </Group>
+      <Stack>
+        {mockIdeas.map((idea, index) => (
+          <IdeaCard idea={idea} key={index} />
+        ))}
+      </Stack>
     </>
   );
 }

@@ -5,7 +5,7 @@ export const headerLinks = {
   staff: [
     {
       label: "Explore",
-      href: "/explore",
+      href: "/",
     },
     {
       label: "Archived",
@@ -18,16 +18,17 @@ export const headerLinks = {
   ],
   qaManager: [
     {
+      label: "Explore",
+      href: "/",
+    },
+
+    {
       label: "Academic Years",
       href: "/manager/academic-years",
     },
     {
       label: "Campaigns",
       href: "/manager/campaigns",
-    },
-    {
-      label: "Idea Categories",
-      href: "/manager/categories",
     },
     {
       label: "Staff",
