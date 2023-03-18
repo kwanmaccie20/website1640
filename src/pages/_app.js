@@ -1,12 +1,24 @@
-import Layout from "@/components/layout/Layout";
-import "@/styles/globals.css";
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import "@/styles/globals.css";
+import AppLayout from "@/layouts/AppLayout";
+import { Inter } from "next/font/google";
+
+// const poppins = Poppins({
+//   subsets: ["latin"],
+//   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+//   variable: "--font-poppins",
+// });
+
+const inter = Inter({
+  subsets: ["latin", "vietnamese"],
+  variable: "--font-inter",
+});
 
 export default function App({ Component, pageProps }) {
-  const [colorScheme, setColorScheme] = useState("light");
+  const [colorScheme, setColorScheme] = useState("dark");
   const toggleColorScheme = (val) =>
     setColorScheme(val || colorScheme == "dark" ? "light" : "dark");
   const router = useRouter();
@@ -25,15 +37,17 @@ export default function App({ Component, pageProps }) {
         <MantineProvider
           withGlobalStyles
           withNormalizeCSS
-          theme={{ colorScheme: colorScheme, primaryColor: "cyan" }}
+          theme={{
+            colorScheme: colorScheme,
+            primaryColor: "teal",
+            fontFamily: inter.style.fontFamily,
+          }}
         >
-          {router.asPath.startsWith("/auth/signin") ? (
-            <Component {...pageProps} />
-          ) : (
-            <Layout>
+          <div className={`${inter.variable} font-sans`}>
+            <AppLayout>
               <Component {...pageProps} />
-            </Layout>
-          )}
+            </AppLayout>
+          </div>
         </MantineProvider>
       </ColorSchemeProvider>
     </>

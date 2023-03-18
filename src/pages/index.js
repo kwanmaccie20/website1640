@@ -12,10 +12,6 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Group mb="sm">
-        <Text>What&#39;s on your mind?</Text>
-        <TextInput label="Filter" />
-      </Group>
       <Stack>
         {mockIdeas.map((idea, index) => (
           <IdeaCard idea={idea} key={index} />
