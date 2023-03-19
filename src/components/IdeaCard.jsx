@@ -64,6 +64,15 @@ export default function IdeaCard({ idea }) {
         </ActionIcon>
       </Group>
       <Divider />
+
+      {idea.comments.map((comment, index) => (
+        <Card withBorder shadow="sm" radius="md" key={index} variant="">
+          <Anchor>
+            <Text className="font-medium">{comment.author}</Text>
+          </Anchor>
+          <Text>{comment.content}</Text>
+        </Card>
+      ))}
       <Box my={"sm"}>
         <form>
           <TextInput
@@ -74,14 +83,6 @@ export default function IdeaCard({ idea }) {
           />
         </form>
       </Box>
-      {idea.comments.map((comment, index) => (
-        <Card withBorder shadow="sm" radius="md" key={index} variant="">
-          <Anchor>
-            <Text className="font-medium">{comment.author}</Text>
-          </Anchor>
-          <Text>{comment.content}</Text>
-        </Card>
-      ))}
     </Card>
   );
 }
