@@ -18,7 +18,7 @@ const poppins = Poppins({
 // });
 
 export default function App({ Component, pageProps }) {
-  const [colorScheme, setColorScheme] = useState("dark");
+  const [colorScheme, setColorScheme] = useState("light");
   const toggleColorScheme = (val) =>
     setColorScheme(val || colorScheme == "dark" ? "light" : "dark");
   const router = useRouter();
@@ -58,9 +58,13 @@ export default function App({ Component, pageProps }) {
           }}
         >
           <div className={`${poppins.variable} font-sans`}>
-            <AppLayout>
+            {router.pathname.startsWith("/auth") ? (
               <Component {...pageProps} />
-            </AppLayout>
+            ) : (
+              <AppLayout>
+                <Component {...pageProps} />
+              </AppLayout>
+            )}
           </div>
         </MantineProvider>
       </ColorSchemeProvider>

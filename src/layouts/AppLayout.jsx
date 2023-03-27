@@ -15,8 +15,8 @@ import React from "react";
 import AppHeader from "./AppHeader";
 import AppSidebar from "./AppSidebar";
 
-export default function AppLayout(props) {
-  const { children, ...rest } = props;
+export default function AppLayout({ children }) {
+  console.log("ttt", children.props.title);
   const [drawerOpened, { close: closeDrawer, toggle: toggleDrawer }] =
     useDisclosure(false);
   const [navOpened, { close: closeNav, toggle: toggleNav }] =
@@ -31,6 +31,7 @@ export default function AppLayout(props) {
             toggleDrawer={toggleDrawer}
             toggleNav={toggleNav}
             navOpened={navOpened}
+            title={children.props.title}
           />
         }
         navbar={<AppSidebar navOpened={navOpened} />}

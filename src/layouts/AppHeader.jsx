@@ -13,7 +13,12 @@ import {
 import { IconBell, IconChevronDown, IconMenu2 } from "@tabler/icons-react";
 import Image from "next/image";
 
-export default function AppHeader({ toggleDrawer, toggleNav, navOpened }) {
+export default function AppHeader({
+  toggleDrawer,
+  toggleNav,
+  navOpened,
+  title,
+}) {
   const theme = useMantineTheme();
   return (
     <Header height={80} className="border-none">
@@ -58,9 +63,7 @@ export default function AppHeader({ toggleDrawer, toggleNav, navOpened }) {
               <IconMenu2 color={theme.primaryColor} size={24} />
             </ActionIcon>
           </MediaQuery>
-          <h1 className="hidden font-semibold text-2xl sm:block">
-            Page title here
-          </h1>
+          <h1 className="hidden font-semibold text-2xl sm:block">{title}</h1>
         </Group>
         {/* Avatar and notification */}
         <Group>
@@ -68,6 +71,7 @@ export default function AppHeader({ toggleDrawer, toggleNav, navOpened }) {
             type="text"
             placeholder="Search here"
             className="hidden xl:block"
+            w={200}
           />
           <ActionIcon variant="light" size={"xl"} className="rounded-xl">
             <IconBell color={theme.primaryColor} size={24} />
