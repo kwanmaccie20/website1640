@@ -4,6 +4,7 @@ import {
   Group,
   Header,
   MediaQuery,
+  Menu,
   Paper,
   Text,
   TextInput,
@@ -76,21 +77,33 @@ export default function AppHeader({
           <ActionIcon variant="light" size={"xl"} className="rounded-xl">
             <IconBell color={theme.primaryColor} size={24} />
           </ActionIcon>
-          <UnstyledButton className="rounded-xl" component={Paper} withBorder>
-            <Group>
-              <Image
-                src="/avatar.jpg"
-                width={40}
-                height={40}
-                alt="Avt"
-                className="rounded-xl xl:w-12 xl:h-12"
-              />
-              <div className="w-[120px] justify-evenly items-center hidden xl:flex">
-                <Text>Mavis</Text>
-                <IconChevronDown strokeWidth={1.5} size={18} />
-              </div>
-            </Group>
-          </UnstyledButton>
+          <Menu width={200}>
+            <Menu.Target>
+              <UnstyledButton
+                className="rounded-xl"
+                component={Paper}
+                withBorder
+              >
+                <Group>
+                  <Image
+                    src="/avatar.jpg"
+                    width={40}
+                    height={40}
+                    alt="Avt"
+                    className="rounded-xl xl:w-12 xl:h-12"
+                  />
+                  <div className="w-[120px] justify-evenly items-center hidden xl:flex">
+                    <Text>Mavis</Text>
+                    <IconChevronDown strokeWidth={1.5} size={18} />
+                  </div>
+                </Group>
+              </UnstyledButton>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item>Profile</Menu.Item>
+              <Menu.Item>Logout</Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </Group>
       </div>
     </Header>

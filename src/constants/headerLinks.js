@@ -5,6 +5,7 @@ import {
   IconCompass,
   IconConfetti,
   IconDashboard,
+  IconHierarchy2,
   IconInfoCircle,
   IconUsers,
   IconVocabulary,
@@ -61,6 +62,11 @@ export const headerLinks = {
       label: "Campaigns",
       href: "/manager/campaigns",
       icon: IconConfetti,
+    },
+    {
+      label: "Departments",
+      href: "/manager/departments",
+      icon: IconHierarchy2,
     },
     {
       label: "Staff",
