@@ -44,7 +44,7 @@ export default function AppLayout({ children }) {
           },
         }}
       >
-        <Container>{children}</Container>
+        <Container size="xl">{children}</Container>
       </AppShell>
 
       {/* drawer */}
