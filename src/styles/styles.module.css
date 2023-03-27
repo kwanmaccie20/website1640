@@ -1,0 +1,550 @@
+
+.text_input input{ 
+  
+  border-bottom: 1px solid gray;
+ 
+}
+
+.text_input input:focus{
+  border-bottom: 3px solid #9facd4;
+}
+.text_input{
+  /* padding-left: 4px; */
+  margin: 15px;
+}
+/* .image_scale_to_full_screen{
+  max-width: 100% !important;
+  max-height: 100% !important;
+  position: relative;
+  height: 100%;
+
+} */
+
+.relative_layout {
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+.zoom_logo {
+  z-index: 100;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-image: url("/NEXT.png");
+  background-size: cover;
+  animation: circle 1.75s ease-in forwards;
+}
+
+@keyframes circle {
+  1% {
+    width: 1.2vw;
+    height: 1.2vw;
+  }
+
+  2% {
+    width: 2.4vw;
+    height: 2.4vw;
+  }
+
+  3% {
+    width: 3.6vw;
+    height: 3.6vw;
+  }
+
+  4% {
+    width: 4.8vw;
+    height: 4.8vw;
+  }
+
+  5% {
+    width: 6vw;
+    height: 6vw;
+  }
+
+  6% {
+    width: 7.2vw;
+    height: 7.2vw;
+  }
+
+  7% {
+    width: 8.4vw;
+    height: 8.4vw;
+  }
+
+  8% {
+    width: 9.6vw;
+    height: 9.6vw;
+  }
+
+  9% {
+    width: 10.8vw;
+    height: 10.8vw;
+  }
+
+  10% {
+    width: 12vw;
+    height: 12vw;
+    border-radius: 50%;
+  }
+
+  11% {
+    width: 13.2vw;
+    height: 13.2vw;
+  }
+
+  12% {
+    width: 14.4vw;
+    height: 14.4vw;
+  }
+
+  13% {
+    width: 15.6vw;
+    height: 15.6vw;
+  }
+
+  14% {
+    width: 16.8vw;
+    height: 16.8vw;
+  }
+
+  15% {
+    width: 18vw;
+    height: 18vw;
+  }
+
+  16% {
+    width: 19.2vw;
+    height: 19.2vw;
+  }
+
+  17% {
+    width: 20.4vw;
+    height: 20.4vw;
+  }
+
+  18% {
+    width: 21.6vw;
+    height: 21.6vw;
+  }
+
+  19% {
+    width: 22.8vw;
+    height: 22.8vw;
+  }
+
+  20% {
+    width: 24vw;
+    height: 24vw;
+    border-radius: 50%;
+  }
+
+  21% {
+    width: 25.2vw;
+    height: 25.2vw;
+  }
+
+  22% {
+    width: 26.4vw;
+    height: 26.4vw;
+  }
+
+  23% {
+    width: 27.6vw;
+    height: 27.6vw;
+  }
+
+  24% {
+    width: 28.8vw;
+    height: 28.8vw;
+  }
+
+  25% {
+    width: 30vw;
+    height: 30vw;
+  }
+
+  26% {
+    width: 31.2vw;
+    height: 31.2vw;
+  }
+
+  27% {
+    width: 32.4vw;
+    height: 32.4vw;
+  }
+
+  28% {
+    width: 33.6vw;
+    height: 33.6vw;
+  }
+
+  29% {
+    width: 34.8vw;
+    height: 34.8vw;
+  }
+
+  30% {
+    width: 36vw;
+    height: 36vw;
+    border-radius: 50%;
+  }
+
+  31% {
+    width: 37.2vw;
+    height: 37.2vw;
+  }
+
+  32% {
+    width: 38.4vw;
+    height: 38.4vw;
+  }
+
+  33% {
+    width: 39.6vw;
+    height: 39.6vw;
+  }
+
+  34% {
+    width: 40.8vw;
+    height: 40.8vw;
+  }
+
+  35% {
+    width: 42vw;
+    height: 42vw;
+  }
+
+  36% {
+    width: 43.2vw;
+    height: 43.2vw;
+  }
+
+  37% {
+    width: 44.4vw;
+    height: 44.4vw;
+  }
+
+  38% {
+    width: 45.6vw;
+    height: 45.6vw;
+  }
+
+  39% {
+    width: 46.8vw;
+    height: 46.8vw;
+  }
+
+  40% {
+    width: 48vw;
+    height: 48vw;
+    border-radius: 50%;
+  }
+
+  41% {
+    width: 49.2vw;
+    height: 49.2vw;
+  }
+
+  42% {
+    width: 50.4vw;
+    height: 50.4vw;
+  }
+
+  43% {
+    width: 51.6vw;
+    height: 51.6vw;
+  }
+
+  44% {
+    width: 52.8vw;
+    height: 52.8vw;
+  }
+
+  45% {
+    width: 54vw;
+    height: 54vw;
+  }
+
+  46% {
+    width: 55.2vw;
+    height: 55.2vw;
+  }
+
+  47% {
+    width: 56.4vw;
+    height: 56.4vw;
+  }
+
+  48% {
+    width: 57.6vw;
+    height: 57.6vw;
+  }
+
+  49% {
+    width: 58.8vw;
+    height: 58.8vw;
+  }
+
+  50% {
+    width: 60vw;
+    height: 60vw;
+  }
+
+  51% {
+    width: 61.2vw;
+    height: 61.2vw;
+  }
+
+  52% {
+    width: 62.4vw;
+    height: 62.4vw;
+  }
+
+  53% {
+    width: 63.6vw;
+    height: 63.6vw;
+  }
+
+  54% {
+    width: 64.8vw;
+    height: 64.8vw;
+  }
+
+  55% {
+    width: 66vw;
+    height: 66vw;
+  }
+
+  56% {
+    width: 67.2vw;
+    height: 67.2vw;
+  }
+
+  57% {
+    width: 68.4vw;
+    height: 68.4vw;
+  }
+
+  58% {
+    width: 69.6vw;
+    height: 69.6vw;
+  }
+
+  59% {
+    width: 70.8vw;
+    height: 70.8vw;
+  }
+
+  60% {
+    width: 72vw;
+    height: 72vw;
+  }
+
+  61% {
+    width: 73.2vw;
+    height: 73.2vw;
+  }
+
+  62% {
+    width: 74.4vw;
+    height: 74.4vw;
+  }
+
+  63% {
+    width: 75.6vw;
+    height: 75.6vw;
+  }
+
+  64% {
+    width: 76.8vw;
+    height: 76.8vw;
+  }
+
+  65% {
+    width: 78vw;
+    height: 78vw;
+  }
+
+  66% {
+    width: 79.2vw;
+    height: 79.2vw;
+  }
+
+  67% {
+    width: 80.4vw;
+    height: 80.4vw;
+  }
+
+  68% {
+    width: 81.6vw;
+    height: 81.6vw;
+  }
+
+  69% {
+    width: 82.8vw;
+    height: 82.8vw;
+  }
+
+  70% {
+    width: 84vw;
+    height: 84vw;
+  }
+
+  71% {
+    width: 85.2vw;
+    height: 85.2vw;
+  }
+
+  72% {
+    width: 86.4vw;
+    height: 86.4vw;
+  }
+
+  73% {
+    width: 87.6vw;
+    height: 87.6vw;
+  }
+
+  74% {
+    width: 88.8vw;
+    height: 88.8vw;
+  }
+
+  75% {
+    width: 90vw;
+    height: 90vw;
+  }
+
+  76% {
+    width: 91.2vw;
+    height: 91.2vw;
+  }
+
+  77% {
+    width: 92.4vw;
+    height: 92.4vw;
+  }
+
+  78% {
+    width: 93.6vw;
+    height: 93.6vw;
+  }
+
+  79% {
+    width: 94.8vw;
+    height: 94.8vw;
+  }
+
+  80% {
+    width: 96vw;
+    height: 96vw;
+  }
+
+  81% {
+    width: 97.2vw;
+    height: 97.2vw;
+  }
+
+  82% {
+    width: 98.4vw;
+    height: 98.4vw;
+  }
+
+  83% {
+    width: 99.6vw;
+    height: 99.6vw;
+  }
+
+  84% {
+    width: 100.8vw;
+    height: 100.8vw;
+  }
+
+  85% {
+    width: 102vw;
+    height: 102vw;
+  }
+
+  86% {
+    width: 103.2vw;
+    height: 103.2vw;
+  }
+
+  87% {
+    width: 104.4vw;
+    height: 104.4vw;
+  }
+
+  88% {
+    width: 105.6vw;
+    height: 105.6vw;
+  }
+
+  89% {
+    width: 106.8vw;
+    height: 106.8vw;
+  }
+
+  90% {
+    width: 108vw;
+    height: 108vw;
+  }
+
+  91% {
+    width: 109.2vw;
+    height: 109.2vw;
+  }
+
+  92% {
+    width: 110.4vw;
+    height: 110.4vw;
+  }
+
+  93% {
+    width: 111.6vw;
+    height: 111.6vw;
+  }
+
+  94% {
+    width: 112.8vw;
+    height: 112.8vw;
+  }
+
+  95% {
+    width: 114vw;
+    height: 114vw;
+  }
+
+  96% {
+    width: 115.2vw;
+    height: 115.2vw;
+  }
+
+  97% {
+    width: 116.4vw;
+    height: 116.4vw;
+  }
+
+  98% {
+    width: 117.6vw;
+    height: 117.6vw;
+  }
+
+  99% {
+    width: 118.8vw;
+    height: 118.8vw;
+  }
+
+  100% {
+    background-image: url("/NEXT.png");
+    width: 120vw;
+    height: 120vw;
+    border-radius: 0%;
+  }
+}
