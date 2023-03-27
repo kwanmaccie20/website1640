@@ -22,7 +22,7 @@ import React from "react";
 export default function IdeaCard({ idea }) {
   const theme = useMantineTheme();
   return (
-    <Card shadow="sm" py="sm" radius="md" withBorder>
+    <Card shadow="sm" py="sm" radius="md">
       <Group position="apart" align="flex-start">
         <Stack spacing={0}>
           <Anchor>

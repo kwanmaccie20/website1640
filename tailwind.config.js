@@ -13,7 +13,7 @@ module.exports = {
         xl: "90em",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", ...fontFamily.sans],
+        sans: ["var(--font-poppins)", ...fontFamily.sans],
       },
     },
   },

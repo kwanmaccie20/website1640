@@ -1,10 +1,14 @@
 import {
+  Affix,
   AppShell,
+  Button,
   Container,
   Drawer,
   MediaQuery,
   NavLink,
   Stack,
+  useMantineColorScheme,
+  useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import React from "react";
@@ -17,6 +21,8 @@ export default function AppLayout(props) {
     useDisclosure(false);
   const [navOpened, { close: closeNav, toggle: toggleNav }] =
     useDisclosure(false);
+  const { toggleColorScheme } = useMantineColorScheme();
+  const theme = useMantineTheme();
   return (
     <>
       <AppShell
@@ -57,6 +63,10 @@ export default function AppLayout(props) {
           </Stack>
         </Drawer>
       </MediaQuery>
+
+      <Affix>
+        <Button onClick={() => toggleColorScheme()}>Toggle scheme</Button>
+      </Affix>
     </>
   );
 }

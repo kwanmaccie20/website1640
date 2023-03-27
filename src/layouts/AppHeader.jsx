@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Box,
   Group,
   Header,
   MediaQuery,
@@ -15,21 +16,26 @@ import Image from "next/image";
 export default function AppHeader({ toggleDrawer, toggleNav, navOpened }) {
   const theme = useMantineTheme();
   return (
-    <Header height={80}>
+    <Header height={80} className="border-none">
       <div className="flex justify-between items-center pr-4">
         {/* Menu button and logo */}
         <Group>
-          <div
+          <Box
+            style={{
+              backgroundColor:
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[6]
+                  : theme.colors.gray[2],
+            }}
             className={` relative flex justify-center items-center w-20 h-20 ${
               navOpened
                 ? "lg:w-72"
                 : "lg:w-20 transition-[width] ease duration-300"
             }`}
-            style={{ backgroundColor: theme.colors.dark[4] }}
           >
             {/* logo here */}
             <Image src="/next.svg" fill alt="Logo" className="lg:p-5 p-2" />
-          </div>
+          </Box>
           {/* In large screen */}
           <MediaQuery smallerThan="lg" styles={{ display: "none" }}>
             <ActionIcon

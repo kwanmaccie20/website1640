@@ -6,6 +6,7 @@ import {
   NavLink,
   ScrollArea,
   Stack,
+  Text,
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
@@ -22,7 +23,13 @@ export default function AppSidebar({ navOpened }) {
         height={"100%"}
         hiddenBreakpoint="md"
         hidden={!navOpened}
-        style={{ backgroundColor: theme.colors.dark[4] }}
+        style={{
+          backgroundColor:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[6]
+              : theme.colors.gray[2],
+          border: "none",
+        }}
         className="transition-[width] ease duration-300 py-3"
       >
         <MediaQuery smallerThan={"lg"} styles={{ display: "none" }}>
@@ -34,20 +41,23 @@ export default function AppSidebar({ navOpened }) {
                       component={Link}
                       href={l.href}
                       py="md"
+                      px={"xl"}
                       key={i}
-                      label={l.label}
+                      label={<Text size={"md"}>{l.label}</Text>}
+                      className="transition-all"
                       styles={(theme) => ({
                         root: {
                           "&:hover": {
                             background: theme.fn.gradient({
                               from: "transparent",
-                              to: theme.primaryColor,
+                              to: theme.fn.rgba(theme.fn.primaryColor(), 0.5),
                               deg: 45,
                             }),
+                            borderRight: `7px solid ${theme.fn.primaryColor()}`,
+                            borderRadius: "0 3px 3px 0",
                           },
                         },
                       })}
-                      hover={{ backgroundColor: "red" }}
                       icon={<l.icon strokeWidth={1.5} />}
                     />
                   ))
