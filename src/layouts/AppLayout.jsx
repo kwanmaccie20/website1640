@@ -16,7 +16,6 @@ import AppHeader from "./AppHeader";
 import AppSidebar from "./AppSidebar";
 
 export default function AppLayout({ children }) {
-  console.log("ttt", children.props.title);
   const [drawerOpened, { close: closeDrawer, toggle: toggleDrawer }] =
     useDisclosure(false);
   const [navOpened, { close: closeNav, toggle: toggleNav }] =

@@ -10,9 +10,7 @@ import {
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
-import { IconHierarchy2 } from "@tabler/icons-react";
 import Link from "next/link";
-import React from "react";
 
 export default function AppSidebar({ navOpened }) {
   const theme = useMantineTheme();
@@ -64,6 +62,8 @@ export default function AppSidebar({ navOpened }) {
                 : headerLinks.qaManager.map((l, i) => (
                     <Tooltip.Floating label={l.label} key={i}>
                       <NavLink
+                        component={Link}
+                        href={l.href}
                         styles={(theme) => ({
                           root: {
                             "&:hover": {
@@ -91,21 +91,32 @@ export default function AppSidebar({ navOpened }) {
         <MediaQuery largerThan={"lg"} styles={{ display: "none" }}>
           <ScrollArea>
             <Stack px={"md"}>
-              {Array(20)
-                .fill(1)
-                .map((l, i) => (
-                  <Tooltip label={"Nav Link"} key={i}>
-                    <NavLink
-                      className="rounded-md"
-                      py="md"
-                      label={
-                        <Center>
-                          <IconHierarchy2 />
-                        </Center>
-                      }
-                    />
-                  </Tooltip>
-                ))}
+              {headerLinks.qaManager.map((l, i) => (
+                <Tooltip.Floating label={l.label} key={i}>
+                  <NavLink
+                    component={Link}
+                    href={l.href}
+                    styles={(theme) => ({
+                      root: {
+                        "&:hover": {
+                          background: theme.fn.gradient({
+                            from: "transparent",
+                            to: theme.fn.rgba(theme.fn.primaryColor(), 0.5),
+                            deg: 45,
+                          }),
+                        },
+                      },
+                    })}
+                    className="rounded-md"
+                    py="md"
+                    label={
+                      <Center>
+                        <l.icon strokeWidth={1.5} />
+                      </Center>
+                    }
+                  />
+                </Tooltip.Floating>
+              ))}
             </Stack>
           </ScrollArea>
         </MediaQuery>

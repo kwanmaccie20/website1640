@@ -16,7 +16,7 @@ import { modals } from "@mantine/modals";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { MantineReactTable } from "mantine-react-table";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 
 export default function Department() {
@@ -31,25 +31,53 @@ export default function Department() {
   } = useSWR("department", async () => {
     const { data, error } = await supabase
       .from("departments")
-      .select("*, staff!departments_coordinator_id_fkey(email,id)");
+      .select("*, staff!departments_coordinator_id_fkey(email,id)")
+      .order("id", { ascending: true });
     if (error) {
       console.log(error);
       throw new Error(error.message);
     }
     return data;
   });
+  useEffect(() => {
+    console.log(tableData);
+  }, [tableData]);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
-  const handleCreateNewRow = (values) => {
-    mutate([...tableData, values]);
+  const handleCreateNewRow = async (values) => {
+    console.log(values);
+    const { data, error } = await supabase
+      .from("departments")
+      .insert({
+        name: values.name,
+        coordinator_id: values.coordinator_id || null,
+      })
+      .select("*");
+    if (error) {
+      console.log(error);
+      window.alert("Error occurs during insert");
+    }
+    if (data) mutate([...tableData, values]);
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
-      tableData[row.index] = values;
+      const { error } = await supabase
+        .from("departments")
+        .update({
+          name: values.name,
+          coordinator_id: values.coordinator_id || null,
+        })
+        .eq("id", row.original.id);
+      if (error) {
+        console.log(error);
+        window.alert("An error occurs when update");
+      } else {
+        tableData[row.index] = values;
+        mutate(tableData);
+      }
       //send/receive api updates here, then refetch or update local table data for re-render
-      mutate([...tableData]);
       exitEditingMode(); //required to exit editing mode and close modal
     }
   };
@@ -62,8 +90,26 @@ export default function Department() {
     modals.openConfirmModal({
       title: "Please confirm your action",
       children: (
-        <Text size="sm">Are you sure to delete {row.getValue("name")}</Text>
+        <Text size="sm">Are you sure to delete {row.getValue("name")}?</Text>
       ),
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      onCancel: () => modals.closeAll(),
+      onConfirm: async () => {
+        const { error, data } = await supabase
+          .from("departments")
+          .delete()
+          .eq("id", row.original.id)
+          .select("id")
+          .single();
+        if (data) {
+          modals.closeAll();
+          mutate();
+        }
+        if (error) {
+          console.log("delDept", error);
+          window.alert("Error occurs when delete");
+        }
+      },
     });
   };
 
@@ -132,7 +178,7 @@ export default function Department() {
             : undefined
         }
         state={{
-          isLoading: isLoading || (!isLoading && tableData.length == 0),
+          isLoading: isLoading,
           showAlertBanner: error,
         }}
         onEditingRowCancel={handleCancelRowEdits}
@@ -160,7 +206,7 @@ export default function Department() {
           </Button>
         )}
       />
-      <CreateNewAccountModal
+      <CreateNewModal
         columns={columns}
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
@@ -171,7 +217,7 @@ export default function Department() {
 }
 
 //example of creating a mantine dialog modal for creating new rows
-export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
+export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
   const [values, setValues] = useState(() =>
     columns.reduce((acc, column) => {
       acc[column.accessorKey ?? ""] = "";
@@ -218,3 +264,11 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
 };
 
 const validateRequired = (value) => !!value.length;
+
+export async function getStaticProps(ctx) {
+  return {
+    props: {
+      title: "Department Management",
+    },
+  };
+}
