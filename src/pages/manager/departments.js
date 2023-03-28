@@ -5,6 +5,7 @@ import {
   Flex,
   Group,
   Modal,
+  Select,
   Stack,
   Text,
   TextInput,
@@ -12,7 +13,8 @@ import {
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
-import { modals } from "@mantine/modals";
+import { useForm } from "@mantine/form";
+import { closeModal, modals } from "@mantine/modals";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { MantineReactTable } from "mantine-react-table";
@@ -39,51 +41,19 @@ export default function Department() {
     }
     return data;
   });
-  useEffect(() => {
-    console.log(tableData);
-  }, [tableData]);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [validationErrors, setValidationErrors] = useState({});
 
-  const handleCreateNewRow = async (values) => {
-    console.log(values);
-    const { data, error } = await supabase
-      .from("departments")
-      .insert({
-        name: values.name,
-        coordinator_id: values.coordinator_id || null,
-      })
-      .select("*");
-    if (error) {
-      console.log(error);
-      window.alert("Error occurs during insert");
-    }
-    if (data) mutate([...tableData, values]);
+  const handleCreateNew = () => {
+    modals.open({
+      title: "Create New Department",
+      children: <CreateNewModal mutate={mutate} />,
+    });
   };
 
-  const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
-    if (!Object.keys(validationErrors).length) {
-      const { error } = await supabase
-        .from("departments")
-        .update({
-          name: values.name,
-          coordinator_id: values.coordinator_id || null,
-        })
-        .eq("id", row.original.id);
-      if (error) {
-        console.log(error);
-        window.alert("An error occurs when update");
-      } else {
-        tableData[row.index] = values;
-        mutate(tableData);
-      }
-      //send/receive api updates here, then refetch or update local table data for re-render
-      exitEditingMode(); //required to exit editing mode and close modal
-    }
-  };
-
-  const handleCancelRowEdits = () => {
-    setValidationErrors({});
+  const handleUpdateRow = (row) => {
+    modals.open({
+      title: "Update Department",
+      children: <UpdateModal mutate={mutate} row={row} />,
+    });
   };
 
   const handleDeleteRow = (row) => {
@@ -113,50 +83,18 @@ export default function Department() {
     });
   };
 
-  const getCommonEditTextInputProps = useCallback(
-    (cell) => {
-      return {
-        error: validationErrors[cell.id],
-        onBlur: (event) => {
-          const isValid =
-            cell.column.id === "name" && validateRequired(event.target.value);
-          if (!isValid) {
-            //set validation error for cell if invalid
-            setValidationErrors({
-              ...validationErrors,
-              [cell.id]: `${cell.column.columnDef.header} is required`,
-            });
-          } else {
-            //remove validation error for cell if valid
-            delete validationErrors[cell.id];
-            setValidationErrors({
-              ...validationErrors,
-            });
-          }
-        },
-      };
-    },
-    [validationErrors]
-  );
-
   const columns = useMemo(
     () => [
       {
         accessorKey: "name",
         header: "Department Name",
-        mantineEditTextInputProps: ({ cell }) => ({
-          ...getCommonEditTextInputProps(cell),
-        }),
       },
       {
         accessorKey: "staff.email",
         header: "Coordinator Email",
-        mantineEditTextInputProps: ({ cell }) => ({
-          ...getCommonEditTextInputProps(cell),
-        }),
       },
     ],
-    [getCommonEditTextInputProps]
+    []
   );
 
   return (
@@ -164,11 +102,9 @@ export default function Department() {
       <MantineReactTable
         columns={columns}
         data={tableData ?? []}
-        editingMode="modal" //default
         enableColumnOrdering
         enableEditing
         enableDensityToggle={false}
-        onEditingRowSave={handleSaveRowEdits}
         mantineToolbarAlertBannerProps={
           error
             ? {
@@ -181,11 +117,10 @@ export default function Department() {
           isLoading: isLoading,
           showAlertBanner: error,
         }}
-        onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: "flex", gap: "16px" }}>
             <Tooltip withArrow position="left" label="Edit">
-              <ActionIcon onClick={() => table.setEditingRow(row)}>
+              <ActionIcon onClick={() => handleUpdateRow(row)}>
                 <IconEdit />
               </ActionIcon>
             </Tooltip>
@@ -199,71 +134,203 @@ export default function Department() {
         renderTopToolbarCustomActions={() => (
           <Button
             color={theme.fn.primaryColor()}
-            onClick={() => setCreateModalOpen(true)}
+            onClick={handleCreateNew}
             variant="filled"
           >
             + New
           </Button>
         )}
       />
-      <CreateNewModal
-        columns={columns}
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-        onSubmit={handleCreateNewRow}
-      />
     </>
   );
 }
 
-//example of creating a mantine dialog modal for creating new rows
-export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
-  const [values, setValues] = useState(() =>
-    columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ""] = "";
-      return acc;
-    }, {})
-  );
+function CreateNewModal({ mutate }) {
+  const supabase = useSupabaseClient();
+  const theme = useMantineTheme();
+  const [staff, setStaff] = useState([]);
+  const form = useForm({
+    initialValues: {
+      name: "",
+      coordinator_id: "",
+    },
+  });
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("staff")
+        .select("id, email")
+        .is("department_id", null);
+      if (error) {
+        console.log(error);
+        throw new Error(error.message);
+      }
+      if (data) setStaff(data);
+    })();
+  }, [supabase]);
 
-  const handleSubmit = () => {
-    //put your validation logic here
-    onSubmit(values);
-    onClose();
-  };
+  const handleSubmit = form.onSubmit(async (values) => {
+    const { data, error } = await supabase
+      .from("departments")
+      .insert({
+        name: values.name,
+        coordinator_id: values.coordinator_id,
+      })
+      .select("id, coordinator_id")
+      .single();
+    if (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+    if (data) {
+      const { data: st, error: stErr } = await supabase
+        .from("staff")
+        .update({
+          department_id: data.id,
+          role_id: 3,
+        })
+        .eq("id", data.coordinator_id)
+        .select("id")
+        .single();
+      if (stErr) {
+        console.log(stErr);
+        throw new Error(stErr.message);
+      }
+      if (st) {
+        modals.closeAll();
+        mutate();
+      }
+    }
+  });
 
   return (
-    <Modal opened={open} onClose={onClose} title="Create New Department">
-      <form onSubmit={(e) => e.preventDefault()}>
-        <Stack
-          sx={{
-            width: "100%",
-          }}
-        >
-          {columns.map((column) => (
-            <TextInput
-              key={column.accessorKey}
-              label={column.header}
-              name={column.accessorKey}
-              onChange={(e) =>
-                setValues({ ...values, [e.target.name]: e.target.value })
-              }
-            />
-          ))}
-        </Stack>
-      </form>
-      <Group position="right" mt={"lg"}>
-        <Button onClick={onClose} variant="subtle">
-          Cancel
-        </Button>
-        <Button color="teal" onClick={handleSubmit} variant="filled">
-          Create
-        </Button>
-      </Group>
-    </Modal>
+    <form onSubmit={handleSubmit}>
+      <Stack>
+        <TextInput
+          label="Department Name"
+          placeholder="Type department name"
+          required
+          {...form.getInputProps("name")}
+        />
+        <Select
+          label="Coordinator"
+          placeholder="Select coordinator"
+          required
+          data={staff?.map((s) => ({ label: s.email, value: s.id })) || []}
+          {...form.getInputProps("coordinator_id")}
+        />
+        <Group position="right">
+          <Button variant="light" onClick={modals.closeAll}>
+            Cancel
+          </Button>
+          <Button color={theme.fn.primaryColor()} type="submit">
+            Create
+          </Button>
+        </Group>
+      </Stack>
+    </form>
   );
-};
+}
 
-const validateRequired = (value) => !!value.length;
+function UpdateModal({ mutate, row }) {
+  const supabase = useSupabaseClient();
+  const theme = useMantineTheme();
+  const [staff, setStaff] = useState([]);
+  const form = useForm({
+    initialValues: {
+      name: row.original.name,
+      coordinator_id: row.original.coordinator_id,
+    },
+  });
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("staff")
+        .select("id, email")
+        .or(`department_id.is.null,department_id.eq.${row.original.id}`);
+      if (error) {
+        console.log(error);
+        throw new Error(error.message);
+      }
+      if (data) {
+        setStaff(data);
+        console.log(data);
+      }
+    })();
+  }, [row.original.id, supabase]);
+
+  const handleSubmit = form.onSubmit(async (values) => {
+    const oldCoordinator = row.original.coordinator_id;
+    const { data, error } = await supabase
+      .from("departments")
+      .update({
+        name: values.name,
+        coordinator_id: values.coordinator_id,
+      })
+      .eq("id", row.original.id)
+      .select("id, coordinator_id")
+      .single();
+    if (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+    if (data) {
+      const { data: st, error: stErr } = await supabase
+        .from("staff")
+        .update({
+          department_id: data.id,
+          role_id: 3,
+        })
+        .eq("id", data.coordinator_id)
+        .select("id")
+        .single();
+      const { data: ost, error: ostErr } = await supabase
+        .from("staff")
+        .update({
+          role_id: 4,
+        })
+        .eq("id", oldCoordinator)
+        .select("id")
+        .single();
+      if (stErr || ostErr) {
+        console.log(stErr, ostErr);
+        throw new Error(stErr?.message + "\n" + ostErr?.message);
+      }
+      if (st && ost) {
+        modals.closeAll();
+        mutate();
+      }
+    }
+  });
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <Stack pt="xl">
+        <TextInput
+          label="Department Name"
+          placeholder="Type department name"
+          required
+          {...form.getInputProps("name")}
+        />
+        <Select
+          label="Coordinator"
+          placeholder="Select coordinator"
+          required
+          data={staff?.map((s) => ({ label: s.email, value: s.id })) || []}
+          {...form.getInputProps("coordinator_id")}
+        />
+        <Group position="right">
+          <Button variant="light" onClick={modals.closeAll}>
+            Cancel
+          </Button>
+          <Button color={theme.fn.primaryColor()} type="submit">
+            Create
+          </Button>
+        </Group>
+      </Stack>
+    </form>
+  );
+}
 
 export async function getStaticProps(ctx) {
   return {
