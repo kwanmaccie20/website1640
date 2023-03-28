@@ -13,18 +13,21 @@ export default async function handler(req, res) {
   const { data: getStaffRole, error: getStaffRoleError } = await supabaseAdmin
     .from("staff")
     .select("id,role_id")
-    .eq({ id: body.id })
+    .eq("id", body.id)
     .single();
   if (getStaffRole && getStaffRole.role_id != 3) {
     const { data, error } = await supabaseAdmin.auth.admin.deleteUser(body.id);
     if (error) {
+      console.log(error);
       res.status(500).send({ message: "500" });
     }
     if (data)
       res.status(200).send({
         message: "New staff has been deleted into the system.",
+        data,
       });
   } else {
+    console.log(getStaffRoleError);
     res.status(500).send({ message: "500" });
   }
 }

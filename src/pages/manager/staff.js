@@ -43,14 +43,10 @@ export default function Department() {
     }
     return data;
   });
-  useEffect(() => {
-    console.log(tableData);
-  }, [tableData]);
+
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [validationErrors, setValidationErrors] = useState({});
 
   const handleCreateNewRow = async (values) => {
-    console.log(values);
     const res = await fetch("/api/create_user", {
       method: "POST",
       header: { "Content-Type": "application/json" },
@@ -90,6 +86,7 @@ export default function Department() {
             body: JSON.stringify({ id: row.original.id }),
           });
           const getRes = await res.json();
+          console.log("----", getRes);
           if (getRes?.data) {
             mutate();
           } else {
@@ -120,77 +117,59 @@ export default function Department() {
     }
   };
 
-  const getCommonEditTextInputProps = useCallback(
-    (cell) => {
-      return {
-        error: validationErrors[cell.id],
-        onBlur: (event) => {
-          const isValid =
-            cell.column.id === "first_name"
-              ? validateRequired(event.target.value)
-              : cell.column.id === "last_name"
-              ? validateRequired(event.target.value)
-              : cell.column.id === "email"
-              ? validateRequired(event.target.value)
-              : cell.column.id === "role";
-          if (!isValid) {
-            //set validation error for cell if invalid
-            setValidationErrors({
-              ...validationErrors,
-              [cell.id]: `${cell.column.columnDef.header} is required`,
-            });
-          } else {
-            //remove validation error for cell if valid
-            delete validationErrors[cell.id];
-            setValidationErrors({
-              ...validationErrors,
-            });
-          }
-        },
-      };
-    },
-    [validationErrors]
-  );
-
   const columns = useMemo(
     () => [
       {
         accessorKey: "first_name",
         header: "First Name",
-        mantineEditTextInputProps: ({ cell }) => ({
-          ...getCommonEditTextInputProps(cell),
-        }),
+        Cell: ({ cell }) => (
+          <Text lineClamp={2}>{cell.getValue("first_name")}</Text>
+        ),
       },
       {
         accessorKey: "last_name",
         header: "Last Name",
-        mantineEditTextInputProps: ({ cell }) => ({
-          ...getCommonEditTextInputProps(cell),
-        }),
+        Cell: ({ cell }) => (
+          <Text lineClamp={2}>{cell.getValue("last_name")}</Text>
+        ),
       },
       {
         accessorKey: "email",
         header: "Email",
-        mantineEditTextInputProps: ({ cell }) => ({
-          ...getCommonEditTextInputProps(cell),
-        }),
+        Cell: ({ cell }) => <Text lineClamp={2}>{cell.getValue("email")}</Text>,
+      },
+      {
+        accessorKey: "gender",
+        header: "Gender",
+      },
+      {
+        accessorKey: "phone",
+        header: "Phone",
+        Cell: ({ cell }) => <Text lineClamp={2}>{cell.getValue("phone")}</Text>,
+      },
+      {
+        accessorKey: "address",
+        header: "Address",
+        Cell: ({ cell }) => (
+          <Text lineClamp={2}>{cell.getValue("address")}</Text>
+        ),
       },
       {
         accessorKey: "departments.name",
         header: "Department",
-        mantineEditTextInputProps: ({ cell }) => ({
-          ...getCommonEditTextInputProps(cell),
-        }),
+        Cell: ({ cell }) =>
+          cell.getValue("departments.name") ? (
+            <Text lineClamp={2}>{cell.getValue("departments.name")}</Text>
+          ) : (
+            <Text color="dimmed"> No department</Text>
+          ),
       },
       {
         accessorKey: "roles.name",
         header: "Role",
-        mantineEditTextInputProps: ({ cell }) => ({
-          ...getCommonEditTextInputProps(cell),
-        }),
       },
     ],
-    [getCommonEditTextInputProps]
+    []
   );
 
   return (
@@ -249,33 +228,11 @@ export default function Department() {
   );
 }
 
-//example of creating a mantine dialog modal for creating new rows
 export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
   const theme = useMantineTheme();
   const supabase = useSupabaseClient();
-  const [departmentList, setDepartmentList] = useState([]);
   const [roleList, setRoleList] = useState([]);
 
-  const getDepartment = async () => {
-    const { data: departments, error } = await supabase
-      .from("departments")
-      .select("id,name");
-    if (error) {
-      console.log(error);
-      throw new Error(error.message);
-    }
-    if (departments) {
-      const departmentValue = [];
-      for (let i = 0; i < departments.length; i++) {
-        const pushData = {
-          value: departments[i].id,
-          label: departments[i].name,
-        };
-        departmentValue.push(pushData);
-      }
-      setDepartmentList(departmentValue);
-    }
-  };
   const getRole = async () => {
     const { data: roles, error } = await supabase
       .from("roles")
@@ -287,6 +244,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
     if (roles) {
       const roleValue = [];
       for (let i = 0; i < roles.length; i++) {
+        if (roles[i].title === "qa_coordinator") continue;
         const pushData = {
           value: roles[i].id,
           label: roles[i].name,
@@ -298,7 +256,6 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
     }
   };
   useEffect(() => {
-    getDepartment();
     getRole();
   }, []);
 
@@ -307,7 +264,6 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
       first_name: "",
       last_name: "",
       email: "",
-      department_id: "",
       role_id: "",
       phone: "",
       gender: "",
@@ -318,43 +274,39 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
     },
   });
 
-  useEffect(() => {
-    console.log(newStaffForm.values);
-  }, [newStaffForm, newStaffForm.values]);
-
   const handleSubmit = newStaffForm.onSubmit((val) => {
-    if (
-      roleList.find((e) => e.value == newStaffForm.values.role_id).title ==
-      "qa_coordinator"
-    )
-      modals.openConfirmModal({
-        title: "A coordinator may be assigned to the department.",
-        children: (
-          <div className="">
-            <Text size={"sm"} color="dimmed">
-              Do you want to continue? If the decision is affirmative, it is to
-              be noted that the present coordinator will be re-assigned to a
-              staff role.
-            </Text>
-          </div>
-        ),
-        labels: { cancel: "Cancel", confirm: "Continue" },
-        onCancel: () => {
-          modals.close("20102001");
-        },
-        modalId: "20102001",
-        closeOnClickOutside: false,
-        onConfirm: () => {
-          onSubmit(val);
-          newStaffForm.reset();
-          onClose();
-        },
-      });
-    else {
-      onSubmit(val);
-      newStaffForm.reset();
-      onClose();
-    }
+    // if (
+    //   roleList.find((e) => e.value == newStaffForm.values.role_id).title ==
+    //   "qa_coordinator"
+    // )
+    //   modals.openConfirmModal({
+    //     title: "A coordinator may be assigned to the department.",
+    //     children: (
+    //       <div className="">
+    //         <Text size={"sm"} color="dimmed">
+    //           Do you want to continue? If the decision is affirmative, it is to
+    //           be noted that the present coordinator will be re-assigned to a
+    //           staff role.
+    //         </Text>
+    //       </div>
+    //     ),
+    //     labels: { cancel: "Cancel", confirm: "Continue" },
+    //     onCancel: () => {
+    //       modals.close("20102001");
+    //     },
+    //     modalId: "20102001",
+    //     closeOnClickOutside: false,
+    //     onConfirm: () => {
+    //       onSubmit(val);
+    //       newStaffForm.reset();
+    //       onClose();
+    //     },
+    //   });
+    // else {
+    onSubmit(val);
+    newStaffForm.reset();
+    onClose();
+    // }
   });
 
   return (
@@ -365,16 +317,6 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
             width: "100%",
           }}
         >
-          {/* {columns.map((column) => (
-            <TextInput
-              key={column.accessorKey}
-              label={column.header}
-              name={column.accessorKey}
-              onChange={(e) =>
-                setValues({ ...values, [e.target.name]: e.target.value })
-              }
-            />
-          ))} */}
           <Group grow>
             <TextInput
               required
@@ -402,7 +344,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
             <Select
               required
               withAsterisk
-              label="Dender"
+              label="Gender"
               placeholder="Pick gender"
               data={[
                 { value: "male", label: "Male" },
@@ -425,15 +367,6 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
             label="Address"
             placeholder="Type address"
             {...newStaffForm.getInputProps("address")}
-          />
-          <Select
-            required
-            withAsterisk
-            label="Department"
-            placeholder="Pick Department"
-            data={departmentList}
-            searchable={true}
-            {...newStaffForm.getInputProps("department_id")}
           />
           <Select
             required
@@ -461,36 +394,37 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
     </Modal>
   );
 };
+
 export const UpdateExistModal = ({ table, row }) => {
   const theme = useMantineTheme();
   const supabase = useSupabaseClient();
-  const [departmentList, setDepartmentList] = useState([]);
+  // const [departmentList, setDepartmentList] = useState([]);
   const [roleList, setRoleList] = useState([]);
 
-  const getDepartment = async () => {
-    const { data: departments, error } = await supabase
-      .from("departments")
-      .select("id,name");
-    if (error) {
-      console.log(error);
-      throw new Error(error.message);
-    }
-    if (departments) {
-      const departmentValue = [];
-      for (let i = 0; i < departments.length; i++) {
-        const pushData = {
-          value: departments[i].id,
-          label: departments[i].name,
-        };
-        departmentValue.push(pushData);
-      }
-      setDepartmentList(departmentValue);
-    }
-  };
+  // const getDepartment = async () => {
+  //   const { data: departments, error } = await supabase
+  //     .from("departments")
+  //     .select("id,name");
+  //   if (error) {
+  //     console.log(error);
+  //     throw new Error(error.message);
+  //   }
+  //   if (departments) {
+  //     const departmentValue = [];
+  //     for (let i = 0; i < departments.length; i++) {
+  //       const pushData = {
+  //         value: departments[i].id,
+  //         label: departments[i].name,
+  //       };
+  //       departmentValue.push(pushData);
+  //     }
+  //     setDepartmentList(departmentValue);
+  //   }
+  // };
   const getRole = async () => {
     const { data: roles, error } = await supabase
       .from("roles")
-      .select("id,name");
+      .select("id,name,title");
     if (error) {
       console.log(error);
       throw new Error(error.message);
@@ -498,14 +432,19 @@ export const UpdateExistModal = ({ table, row }) => {
     if (roles) {
       const roleValue = [];
       for (let i = 0; i < roles.length; i++) {
-        const pushData = { value: roles[i].id, label: roles[i].name };
+        if (roles[i].title === "qa_coordinator") continue;
+        const pushData = {
+          value: roles[i].id,
+          label: roles[i].name,
+          title: roles[i].title,
+        };
         roleValue.push(pushData);
       }
       setRoleList(roleValue);
     }
   };
   useEffect(() => {
-    getDepartment();
+    // getDepartment();
     getRole();
   }, []);
 
@@ -514,7 +453,7 @@ export const UpdateExistModal = ({ table, row }) => {
       email: row.original.email,
       first_name: row.original.first_name,
       last_name: row.original.last_name,
-      department_id: row.original.department_id,
+      // department_id: row.original.department_id,
       role_id: row.original.role_id,
       phone: row.original.phone,
       gender: row.original.gender,
@@ -529,9 +468,9 @@ export const UpdateExistModal = ({ table, row }) => {
           : "Please access department to change the department for this user.",
     },
   });
-  useEffect(() => {
-    console.log(newStaffForm.values);
-  }, [newStaffForm, newStaffForm.values]);
+  // useEffect(() => {
+  //   console.log(newStaffForm.values);
+  // }, [newStaffForm, newStaffForm.values]);
 
   const handleSubmit = newStaffForm.onSubmit(async (val) => {
     if (val.email != row.original.email) val.email = row.original.email;
@@ -545,33 +484,33 @@ export const UpdateExistModal = ({ table, row }) => {
     }
     if (data) {
       //Update coordinator of the department
-      const { data: roleData, error: roleError } = await supabase
-        .from("roles")
-        .select("id,title")
-        .eq("id", val.role_id)
-        .single();
-      if (roleData && roleData.title == "qa_coordinator") {
-        //Update user// return current coordinator to staff
-        const { data: roleStaff, error: roleStaffError } = await supabase
-          .from("roles")
-          .select("id,title")
-          .eq("title", "staff")
-          .single();
-        if (roleStaff) {
-          const { data: updateCurrentCoordinator, error: updateCoorError } =
-            await supabase
-              .from("staff")
-              .update({ role_id: roleStaff.id })
-              .eq("role_id", val.role_id)
-              .eq("department_id", val.department_id)
-              .neq("id", row.original.id);
-        }
-        //New coordinator
-        const { data: departmentData, error: departmentError } = await supabase
-          .from("departments")
-          .update({ coordinator_id: row.original.id })
-          .eq("id", val.department_id);
-      }
+      // const { data: roleData, error: roleError } = await supabase
+      //   .from("roles")
+      //   .select("id,title")
+      //   .eq("id", val.role_id)
+      //   .single();
+      // if (roleData && roleData.title == "qa_coordinator") {
+      //   //Update user// return current coordinator to staff
+      //   const { data: roleStaff, error: roleStaffError } = await supabase
+      //     .from("roles")
+      //     .select("id,title")
+      //     .eq("title", "staff")
+      //     .single();
+      //   if (roleStaff) {
+      //     const { data: updateCurrentCoordinator, error: updateCoorError } =
+      //       await supabase
+      //         .from("staff")
+      //         .update({ role_id: roleStaff.id })
+      //         .eq("role_id", val.role_id)
+      //         .eq("department_id", val.department_id)
+      //         .neq("id", row.original.id);
+      //   }
+      //   //New coordinator
+      //   const { data: departmentData, error: departmentError } = await supabase
+      //     .from("departments")
+      //     .update({ coordinator_id: row.original.id })
+      //     .eq("id", val.department_id);
+      // }
       modals.close("20092001");
       mtate("staff");
     }
@@ -636,7 +575,7 @@ export const UpdateExistModal = ({ table, row }) => {
           placeholder="Type address"
           {...newStaffForm.getInputProps("address")}
         />
-        <Select
+        {/* <Select
           required
           withAsterisk
           disabled
@@ -645,7 +584,7 @@ export const UpdateExistModal = ({ table, row }) => {
           data={departmentList}
           searchable={true}
           {...newStaffForm.getInputProps("department_id")}
-        />
+        /> */}
         <Select
           disabled={row.original.role_id == 3}
           required
@@ -668,8 +607,6 @@ export const UpdateExistModal = ({ table, row }) => {
     </form>
   );
 };
-
-const validateRequired = (value) => !!value.length;
 
 export async function getStaticProps(ctx) {
   return {

@@ -126,7 +126,7 @@ export default function Department() {
             </Tooltip>
             <Tooltip withArrow position="right" label="Delete">
               <ActionIcon color="red" onClick={() => handleDeleteRow(row)}>
-                <IconTrash />
+                <IconTrash />{" "}
               </ActionIcon>
             </Tooltip>
           </Box>
