@@ -90,7 +90,7 @@ export default function AppSidebar({ navOpened }) {
         </MediaQuery>
         <MediaQuery largerThan={"lg"} styles={{ display: "none" }}>
           <ScrollArea>
-            <Stack px={"md"}>
+            <Stack>
               {headerLinks.qaManager.map((l, i) => (
                 <Tooltip.Floating label={l.label} key={i}>
                   <NavLink

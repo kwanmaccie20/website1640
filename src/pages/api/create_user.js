@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/libs/supabase";
 import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
 /**
  *
  * @param {NextRequest} req
@@ -10,11 +11,12 @@ export default async function handler(req, res) {
     res.status(405).send({ message: "Only accept POST method." });
   }
   const body = JSON.parse(req.body);
+  const password = generatePassword(6);
 
   const { data, error } = await supabaseAdmin.auth.admin.createUser({
     email: body.email,
     email_confirm: true,
-    password: generatePassword(6),
+    password: password,
     user_metadata: {
       email: body.email,
       department_id: body.department_id,
@@ -31,6 +33,10 @@ export default async function handler(req, res) {
     res.status(500).send({ message: "500" });
   }
   if (data) {
+    fs.appendFileSync(
+      "public/user.txt",
+      `\nemail:${body.email} \tPassword:${password}`
+    );
     //Update coordinator of the department
     const { data: roleData, error: roleError } = await supabaseAdmin
       .from("roles")
@@ -60,7 +66,6 @@ export default async function handler(req, res) {
           .update({ coordinator_id: data.user.id })
           .eq("id", body.department_id);
     }
-
     res.status(200).send({
       message: "New staff has been added into the system.",
       data: body,
