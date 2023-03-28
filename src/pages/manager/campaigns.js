@@ -13,7 +13,7 @@ import {
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
-import { DatePickerInput } from "@mantine/dates";
+import { DateInput, DatePickerInput } from "@mantine/dates";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { closeAllModals, modals } from "@mantine/modals";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -68,27 +68,34 @@ export default function AcademicYear() {
     if (data) mutate([...tableData, data]);
   };
 
-  const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
-    if (!Object.keys(validationErrors).length) {
-      const { error } = await supabase
-        .from("academic_year")
-        .update({
-          name: values.name,
-          closure_date: values.closure_date,
-          final_closure_date: values.final_closure_date,
-          academic_id: values.academic_id,
-        })
-        .eq("id", row.original.id);
-      if (error) {
-        console.log(error);
-        window.alert("An error occurs when update");
-      } else {
-        tableData[row.index] = values;
-        mutate(tableData);
-      }
-      //send/receive api updates here, then refetch or update local table data for re-render
-      exitEditingMode(); //required to exit editing mode and close modal
-    }
+  // const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
+  //   if (!Object.keys(validationErrors).length) {
+  //     const { error } = await supabase
+  //       .from("academic_year")
+  //       .update({
+  //         name: values.name,
+  //         closure_date: values.closure_date,
+  //         final_closure_date: values.final_closure_date,
+  //         academic_id: values.academic_id,
+  //       })
+  //       .eq("id", row.original.id);
+  //     if (error) {
+  //       console.log(error);
+  //       window.alert("An error occurs when update");
+  //     } else {
+  //       tableData[row.index] = values;
+  //       mutate(tableData);
+  //     }
+  //     //send/receive api updates here, then refetch or update local table data for re-render
+  //     exitEditingMode(); //required to exit editing mode and close modal
+  //   }
+  // };
+  const handleUpdateRow = (table, row) => {
+    modals.open({
+      title: "Update the campaign",
+      children: <UpdateExistCampaignModal table={table} row={row} />,
+      modalId: "THIS2010",
+    });
   };
 
   const handleCancelRowEdits = () => {
@@ -163,8 +170,47 @@ export default function AcademicYear() {
         mantineEditTextInputProps: ({ cell }) => ({
           ...getCommonEditTextInputProps(cell),
         }),
-        Cell: ({ cell }) =>
-          dayjs(cell.getValue("closure_date")).format("MMM DD, YYYY HH:mm A"),
+        Cell: ({ cell }) => {
+          return (
+            <>
+              <Group>
+                <div>
+                  <DatePickerInput
+                    dropdownType="modal"
+                    variant={"unstyled"}
+                    value={dayjs(cell.getValue("closure_date")).toDate()}
+                    onChange={async (e) => {
+                      if (
+                        dayjs(e) < dayjs(cell.row.original.final_closure_date)
+                      ) {
+                        console.log("TRUE");
+
+                        //CONTINUE
+                        //  const { data, error } = await supabase
+                        //    .from("campaigns")
+                        //    .update({
+                        //      closure_date: dayjs(e)
+                        //        .set("hour", 0)
+                        //        .set("minute", 0)
+                        //        .set("second", 0)
+                        //        .toDate(),
+                        //    })
+                        //    .eq("id", cell.row.original.id);
+                      } else {
+                        console.log("FALSE");
+                      }
+                    }}
+                    icon={
+                      <ActionIcon>
+                        <IconEdit size={"xs"} />
+                      </ActionIcon>
+                    }
+                  />
+                </div>
+              </Group>
+            </>
+          );
+        },
       },
       {
         accessorKey: "final_closure_date",
@@ -172,10 +218,22 @@ export default function AcademicYear() {
         mantineEditTextInputProps: ({ cell }) => ({
           ...getCommonEditTextInputProps(cell),
         }),
-        Cell: ({ cell }) =>
-          dayjs(cell.getValue("final_closure_date")).format(
-            "MMM DD, YYYY HH:mm A"
-          ),
+        Cell: ({ cell }) => {
+          return (
+            <>
+              <Group>
+                <div>
+                  {dayjs(cell.getValue("final_closure_date")).format(
+                    "MMM DD, YYYY HH:mm A"
+                  )}{" "}
+                </div>
+                <ActionIcon>
+                  <IconEdit size={"xs"} />
+                </ActionIcon>
+              </Group>
+            </>
+          );
+        },
       },
       {
         accessorKey: "academic_year.name",
@@ -197,7 +255,7 @@ export default function AcademicYear() {
         enableColumnOrdering
         enableEditing
         enableDensityToggle={false}
-        onEditingRowSave={handleSaveRowEdits}
+        // onEditingRowSave={handleSaveRowEdits}
         mantineToolbarAlertBannerProps={
           error
             ? {
@@ -214,7 +272,7 @@ export default function AcademicYear() {
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: "flex", gap: "16px" }}>
             <Tooltip withArrow position="left" label="Edit">
-              <ActionIcon onClick={() => table.setEditingRow(row)}>
+              <ActionIcon onClick={() => handleUpdateRow(table, row)}>
                 <IconEdit />
               </ActionIcon>
             </Tooltip>
@@ -343,6 +401,103 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
         </Group>
       </form>
     </Modal>
+  );
+};
+export const UpdateExistCampaignModal = ({ table, row }) => {
+  const supabase = useSupabaseClient();
+  const [academic, setAcademic] = useState([]);
+  const form = useForm({
+    initialValues: {
+      name: row.original.name,
+      closure: [
+        dayjs(row.original.closure_date).toDate(),
+        dayjs(row.original.final_closure_date).toDate(),
+      ],
+      academic_id: row.original.academic_id,
+    },
+    validate: {
+      academic_id: (val) =>
+        val == row.original.academic_id
+          ? null
+          : "Don't allow to update this field.",
+      closure: (val) => (val.length === 0 ? "This field is required" : null),
+    },
+  });
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase.from("academic_year").select("*");
+      if (error) {
+        console.log(error);
+        throw new Error(error.message);
+      }
+      if (data) setAcademic(data);
+    })();
+  }, [supabase]);
+  useEffect(() => console.log(form.values), [form.values]);
+
+  const handleSubmit = form.onSubmit((values) => {
+    //put your validation logic here
+    // onSubmit(values);
+    // onClose();
+  });
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <Stack
+        sx={{
+          width: "100%",
+        }}
+      >
+        <TextInput
+          label="Name"
+          required
+          {...form.getInputProps("name")}
+          placeholder="Type campaign name"
+        />
+        {/* <DatePickerInput
+          type="range"
+          // dropdownType="modal"
+          label={
+            <Group spacing={"sm"}>
+              <Text>Closure Date - Final Closure Date</Text>
+              <Tooltip
+                label="The campaign is no longer accept new ideas after closure date,
+                  but comments are allowed until final closure date."
+                multiline
+              >
+                <IconQuestionCircle size={14} strokeWidth={1.5} />
+              </Tooltip>
+            </Group>
+          }
+          placeholder="Pick dates"
+          minDate={dayjs(Date.now()).add(1, "day").toDate()}
+          {...form.getInputProps("closure")}
+        /> */}
+        <Select
+          disabled
+          required
+          withAsterisk
+          searchable
+          data={academic.map((a) => ({ label: a?.name, value: a?.id }))}
+          label="Academic Year"
+          {...form.getInputProps("academic_id")}
+        />
+      </Stack>
+      <Group position="right" mt={"lg"}>
+        <Button
+          onClick={() => {
+            modals.close("THIS2010");
+            form.reset();
+          }}
+          variant="subtle"
+        >
+          Cancel
+        </Button>
+        <Button color="teal" type="submit" variant="filled">
+          Update
+        </Button>
+      </Group>
+    </form>
   );
 };
 
