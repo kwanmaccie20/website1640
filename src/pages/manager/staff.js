@@ -402,8 +402,8 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
             <Select
               required
               withAsterisk
-              label="Department"
-              placeholder="Pick Department"
+              label="Dender"
+              placeholder="Pick gender"
               data={[
                 { value: "male", label: "Male" },
                 { value: "female", label: "Female" },
@@ -427,6 +427,8 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
             {...newStaffForm.getInputProps("address")}
           />
           <Select
+            required
+            withAsterisk
             label="Department"
             placeholder="Pick Department"
             data={departmentList}
