@@ -39,14 +39,11 @@ export default function AcademicYear() {
     }
     return data;
   });
-  useEffect(() => {
-    console.log(tableData);
-  }, [tableData]);
+
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
   const handleCreateNewRow = async (values) => {
-    console.log(values);
     const { data, error } = await supabase
       .from("academic_year")
       .insert({

@@ -360,7 +360,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
           />
           <DatePickerInput
             type="range"
-            dropdownType="modal"
+            popoverProps={{ withinPortal: true }}
             label={
               <Group spacing={"sm"}>
                 <Text>Closure Date - Final Closure Date</Text>

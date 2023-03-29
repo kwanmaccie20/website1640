@@ -216,6 +216,7 @@ function CreateNewModal({ mutate }) {
           label="Coordinator"
           placeholder="Select coordinator"
           required
+          withinPortal
           data={staff?.map((s) => ({ label: s.email, value: s.id })) || []}
           {...form.getInputProps("coordinator_id")}
         />
