@@ -17,8 +17,9 @@ import {
 } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
 import { closeModal, modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconCheck, IconEdit, IconTrash, IconX } from "@tabler/icons-react";
 import { MantineReactTable } from "mantine-react-table";
 import { title } from "process";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -55,8 +56,17 @@ export default function Department() {
     const getRes = await res.json();
     if (getRes?.data) {
       mutate([...tableData, getRes.data]);
+      notifications.show({
+        title: "Staff added successfully",
+        icon: <IconCheck />,
+      });
     } else {
-      alert("We are having trouble adding new staff to the system.");
+      notifications.show({
+        title: "An error occurs",
+        message: `Could not add staff information`,
+        icon: <IconX />,
+        color: "red",
+      });
     }
   };
 
@@ -88,9 +98,18 @@ export default function Department() {
           const getRes = await res.json();
           console.log("----", getRes);
           if (getRes?.data) {
+            notifications.show({
+              title: "Staff deleted successfully",
+              icon: <IconCheck />,
+            });
             mutate();
           } else {
-            alert("We are having trouble deleting the staff.");
+            notifications.show({
+              title: "An error occurs",
+              message: `Could not delete staff information`,
+              icon: <IconX />,
+              color: "red",
+            });
           }
         },
       });
@@ -231,40 +250,40 @@ export default function Department() {
 export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
   const theme = useMantineTheme();
   const supabase = useSupabaseClient();
-  const [roleList, setRoleList] = useState([]);
+  // const [roleList, setRoleList] = useState([]);
 
-  const getRole = async () => {
-    const { data: roles, error } = await supabase
-      .from("roles")
-      .select("id,name,title");
-    if (error) {
-      console.log(error);
-      throw new Error(error.message);
-    }
-    if (roles) {
-      const roleValue = [];
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].title === "qa_coordinator") continue;
-        const pushData = {
-          value: roles[i].id,
-          label: roles[i].name,
-          title: roles[i].title,
-        };
-        roleValue.push(pushData);
-      }
-      setRoleList(roleValue);
-    }
-  };
-  useEffect(() => {
-    getRole();
-  }, []);
+  // const getRole = async () => {
+  //   const { data: roles, error } = await supabase
+  //     .from("roles")
+  //     .select("id,name,title");
+  //   if (error) {
+  //     console.log(error);
+  //     throw new Error(error.message);
+  //   }
+  //   if (roles) {
+  //     const roleValue = [];
+  //     for (let i = 0; i < roles.length; i++) {
+  //       if (roles[i].title === "qa_coordinator") continue;
+  //       const pushData = {
+  //         value: roles[i].id,
+  //         label: roles[i].name,
+  //         title: roles[i].title,
+  //       };
+  //       roleValue.push(pushData);
+  //     }
+  //     setRoleList(roleValue);
+  //   }
+  // };
+  // useEffect(() => {
+  //   getRole();
+  // }, []);
 
   const newStaffForm = useForm({
     initialValues: {
       first_name: "",
       last_name: "",
       email: "",
-      role_id: "",
+      role_id: 4,
       phone: "",
       gender: "",
       address: "",
@@ -368,7 +387,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
             placeholder="Type address"
             {...newStaffForm.getInputProps("address")}
           />
-          <Select
+          {/* <Select
             required
             withAsterisk
             label="Role"
@@ -376,7 +395,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
             data={roleList}
             searchable={true}
             {...newStaffForm.getInputProps("role_id")}
-          />
+          /> */}
         </Stack>
         <Group position="right" mt={"lg"}>
           <Button onClick={onClose} variant="subtle">
@@ -399,7 +418,7 @@ export const UpdateExistModal = ({ table, row }) => {
   const theme = useMantineTheme();
   const supabase = useSupabaseClient();
   // const [departmentList, setDepartmentList] = useState([]);
-  const [roleList, setRoleList] = useState([]);
+  // const [roleList, setRoleList] = useState([]);
 
   // const getDepartment = async () => {
   //   const { data: departments, error } = await supabase
@@ -421,31 +440,31 @@ export const UpdateExistModal = ({ table, row }) => {
   //     setDepartmentList(departmentValue);
   //   }
   // };
-  const getRole = async () => {
-    const { data: roles, error } = await supabase
-      .from("roles")
-      .select("id,name,title");
-    if (error) {
-      console.log(error);
-      throw new Error(error.message);
-    }
-    if (roles) {
-      const roleValue = [];
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].title === "qa_coordinator") continue;
-        const pushData = {
-          value: roles[i].id,
-          label: roles[i].name,
-          title: roles[i].title,
-        };
-        roleValue.push(pushData);
-      }
-      setRoleList(roleValue);
-    }
-  };
+  // const getRole = async () => {
+  //   const { data: roles, error } = await supabase
+  //     .from("roles")
+  //     .select("id,name,title");
+  //   if (error) {
+  //     console.log(error);
+  //     throw new Error(error.message);
+  //   }
+  //   if (roles) {
+  //     const roleValue = [];
+  //     for (let i = 0; i < roles.length; i++) {
+  //       if (roles[i].title === "qa_coordinator") continue;
+  //       const pushData = {
+  //         value: roles[i].id,
+  //         label: roles[i].name,
+  //         title: roles[i].title,
+  //       };
+  //       roleValue.push(pushData);
+  //     }
+  //     setRoleList(roleValue);
+  //   }
+  // };
   useEffect(() => {
     // getDepartment();
-    getRole();
+    // getRole();
   }, []);
 
   const newStaffForm = useForm({
@@ -480,7 +499,12 @@ export const UpdateExistModal = ({ table, row }) => {
       .eq("id", row.original.id)
       .select("id");
     if (error) {
-      alert("We are having trouble updating staff information.");
+      notifications.show({
+        title: "An error occurs",
+        message: `Could not update staff information`,
+        icon: <IconX />,
+        color: "red",
+      });
     }
     if (data) {
       //Update coordinator of the department
@@ -512,6 +536,10 @@ export const UpdateExistModal = ({ table, row }) => {
       //     .eq("id", val.department_id);
       // }
       modals.close("20092001");
+      notifications.show({
+        title: "Staff updated successfully",
+        icon: <IconCheck />,
+      });
       mtate("staff");
     }
   });
@@ -585,7 +613,7 @@ export const UpdateExistModal = ({ table, row }) => {
           searchable={true}
           {...newStaffForm.getInputProps("department_id")}
         /> */}
-        <Select
+        {/* <Select
           disabled={row.original.role_id == 3}
           required
           withAsterisk
@@ -596,7 +624,7 @@ export const UpdateExistModal = ({ table, row }) => {
           data={roleList}
           searchable={true}
           {...newStaffForm.getInputProps("role_id")}
-        />
+        /> */}
       </Stack>
       <Group position="right" mt={"lg"}>
         <Button variant={"light"} onClick={() => closeModal("20092001")}>

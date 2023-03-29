@@ -13,8 +13,9 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconCheck, IconEdit, IconTrash, IconX } from "@tabler/icons-react";
 import { MantineReactTable } from "mantine-react-table";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
@@ -53,9 +54,20 @@ export default function AcademicYear() {
       .select("*");
     if (error) {
       console.log(error);
-      window.alert("Error occurs during insert");
+      notifications.show({
+        title: "An error occurs",
+        message: `Could not add academic year`,
+        icon: <IconX />,
+        color: "red",
+      });
     }
-    if (data) mutate([...tableData, values]);
+    if (data) {
+      notifications.show({
+        title: "Academic year added successfully",
+        icon: <IconCheck />,
+      });
+      mutate([...tableData, values]);
+    }
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
@@ -69,10 +81,19 @@ export default function AcademicYear() {
         .eq("id", row.original.id);
       if (error) {
         console.log(error);
-        window.alert("An error occurs when update");
+        notifications.show({
+          title: "An error occurs",
+          message: `Could not update academic year`,
+          icon: <IconX />,
+          color: "red",
+        });
       } else {
         tableData[row.index] = values;
         mutate(tableData);
+        notifications.show({
+          title: "Academic year updated successfully",
+          icon: <IconCheck />,
+        });
       }
       //send/receive api updates here, then refetch or update local table data for re-render
       exitEditingMode(); //required to exit editing mode and close modal
@@ -99,12 +120,21 @@ export default function AcademicYear() {
           .select("id")
           .single();
         if (data) {
+          notifications.show({
+            title: "Academic year updated successfully",
+            icon: <IconCheck />,
+          });
           modals.closeAll();
           mutate();
         }
         if (error) {
           console.log("delAcaY", error);
-          window.alert("Error occurs when delete");
+          notifications.show({
+            title: "Could not delete academic year",
+            message: `This academic year contains one or more campaigns.`,
+            icon: <IconX />,
+            color: "red",
+          });
         }
       },
     });
