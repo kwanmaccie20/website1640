@@ -16,6 +16,7 @@ import Link from "next/link";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { useRef } from "react";
 import { useRouter } from "next/router";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 export default function Index() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function Index() {
   const [processing, setProcessing] = useState(false);
   const [err, setErr] = useState([]);
   const [runZoom, setRunZoom] = useState(false);
+  const supabase = useSupabaseClient();
   const form = useForm({
     initialValues: {
       uname: "",
@@ -37,7 +39,7 @@ export default function Index() {
         value.length > 0 ? null : "Please don't forget to enter your password.",
     },
   });
-  const handleSubmit = form.onSubmit((val) => {
+  const handleSubmit = form.onSubmit(async (val) => {
     const credential = { username: val.uname, password: val.password };
     setErr([]);
     setProcessing(true);
@@ -47,10 +49,19 @@ export default function Index() {
       //   "I'm sorry, I'm unable to log you in at this time. Please check your credentials and try again later. If the issue persists, please contact us for further assistance.",
       // ]);
       // setProcessing(false);
-      setRunZoom(true);
-      setTimeout(() => {
-        router.push("/");
-      }, 1700);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: credential.username,
+        password: credential.password,
+      });
+      if (error) {
+        setErr((cval) => [...cval, "Password or email is incorrect."]);
+        setProcessing(false); 
+      } else {
+        setRunZoom(true);
+        setTimeout(() => {
+          router.push("/");
+        }, 1700);
+      }
     }
   });
   return (
