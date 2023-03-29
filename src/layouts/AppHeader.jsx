@@ -11,6 +11,7 @@ import {
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconBell, IconChevronDown, IconMenu2 } from "@tabler/icons-react";
 import Image from "next/image";
 
@@ -23,6 +24,7 @@ export default function AppHeader({
   name,
 }) {
   const theme = useMantineTheme();
+  const supabase = useSupabaseClient();
   return (
     <Header height={80} className="border-none">
       <div className="flex justify-between items-center pr-4">
@@ -103,7 +105,16 @@ export default function AppHeader({
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item>Profile</Menu.Item>
-              <Menu.Item>Logout</Menu.Item>
+              <Menu.Item
+                onClick={
+                  () => {
+                    supabase.auth.signOut();
+                  }
+                  // router.push("/");
+                }
+              >
+                Logout
+              </Menu.Item>
             </Menu.Dropdown>
           </Menu>
         </Group>

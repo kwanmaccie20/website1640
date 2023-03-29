@@ -41,6 +41,7 @@ export default function Index() {
   });
   const handleSubmit = form.onSubmit(async (val) => {
     const credential = { username: val.uname, password: val.password };
+    console.log(credential);
     setErr([]);
     setProcessing(true);
     if (true) {
@@ -54,8 +55,9 @@ export default function Index() {
         password: credential.password,
       });
       if (error) {
+        console.log(error);
         setErr((cval) => [...cval, "Password or email is incorrect."]);
-        setProcessing(false); 
+        setProcessing(false);
       } else {
         setRunZoom(true);
         setTimeout(() => {
