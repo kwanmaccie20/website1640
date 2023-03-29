@@ -19,6 +19,8 @@ export default function AppHeader({
   toggleNav,
   navOpened,
   title,
+  user,
+  name,
 }) {
   const theme = useMantineTheme();
   return (
@@ -86,14 +88,14 @@ export default function AppHeader({
               >
                 <Group>
                   <Image
-                    src="/avatar.jpg"
+                    src="http://placekitten.com/g/200/300"
                     width={40}
                     height={40}
                     alt="Avt"
                     className="rounded-xl xl:w-12 xl:h-12"
                   />
                   <div className="w-[120px] justify-evenly items-center hidden xl:flex">
-                    <Text>Mavis</Text>
+                    <Text>{name}</Text>
                     <IconChevronDown strokeWidth={1.5} size={18} />
                   </div>
                 </Group>

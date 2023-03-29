@@ -27,11 +27,6 @@ export const headerLinks = {
       icon: IconArchive,
     },
     {
-      label: "My Ideas",
-      href: "/me/ideas",
-      icon: IconBulb,
-    },
-    {
       label: "About",
       href: "/about",
       icon: IconInfoCircle,
