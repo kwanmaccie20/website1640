@@ -165,47 +165,15 @@ export default function AcademicYear() {
     });
   };
 
-  const getCommonEditTextInputProps = useCallback(
-    (cell) => {
-      return {
-        error: validationErrors[cell.id],
-        onBlur: (event) => {
-          const isValid =
-            cell.column.id === "name" && validateRequired(event.target.value);
-          if (!isValid) {
-            //set validation error for cell if invalid
-            setValidationErrors({
-              ...validationErrors,
-              [cell.id]: `${cell.column.columnDef.header} is required`,
-            });
-          } else {
-            //remove validation error for cell if valid
-            delete validationErrors[cell.id];
-            setValidationErrors({
-              ...validationErrors,
-            });
-          }
-        },
-      };
-    },
-    [validationErrors]
-  );
-
   const columns = useMemo(
     () => [
       {
         accessorKey: "name",
         header: "Campaign",
-        mantineEditTextInputProps: ({ cell }) => ({
-          ...getCommonEditTextInputProps(cell),
-        }),
       },
       {
         accessorKey: "closure_date",
         header: "Closure Date",
-        mantineEditTextInputProps: ({ cell }) => ({
-          ...getCommonEditTextInputProps(cell),
-        }),
         Cell: ({ cell }) => {
           return (
             <>
@@ -256,9 +224,6 @@ export default function AcademicYear() {
       {
         accessorKey: "final_closure_date",
         header: "Final Closure Date",
-        mantineEditTextInputProps: ({ cell }) => ({
-          ...getCommonEditTextInputProps(cell),
-        }),
         Cell: ({ cell }) => {
           return (
             <>
@@ -306,12 +271,9 @@ export default function AcademicYear() {
       {
         accessorKey: "academic_year.name",
         header: "Academic Year",
-        mantineEditTextInputProps: ({ cell }) => ({
-          ...getCommonEditTextInputProps(cell),
-        }),
       },
     ],
-    [getCommonEditTextInputProps]
+    []
   );
 
   return (
