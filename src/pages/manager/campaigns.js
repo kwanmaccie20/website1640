@@ -17,11 +17,17 @@ import { DateInput, DatePickerInput } from "@mantine/dates";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { closeAllModals, modals } from "@mantine/modals";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { IconEdit, IconQuestionCircle, IconTrash } from "@tabler/icons-react";
+import {
+  IconCalendarOff,
+  IconEdit,
+  IconLock,
+  IconQuestionCircle,
+  IconTrash,
+} from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { MantineReactTable } from "mantine-react-table";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // id name 2 closure, aca id
 
@@ -104,16 +110,22 @@ export default function AcademicYear() {
 
   const handleDeleteRow = (row) => {
     modals.openConfirmModal({
-      title: "Please confirm your action",
+      title: "Close Campaign Now?",
       children: (
-        <Text size="sm">Are you sure to delete {row.getValue("name")}?</Text>
+        <Text size="sm">
+          Are you sure to close (Do not accept ideas and comments)
+          {row.getValue("name")}?
+        </Text>
       ),
-      labels: { confirm: "Delete", cancel: "Cancel" },
+      labels: { confirm: "Continue", cancel: "Cancel" },
       onCancel: () => modals.closeAll(),
       onConfirm: async () => {
         const { error, data } = await supabase
           .from("campaigns")
-          .delete()
+          .update({
+            closure_date: dayjs(Date.now()).toDate(),
+            final_closure_date: dayjs(Date.now()).toDate(),
+          })
           .eq("id", row.original.id)
           .select("id")
           .single();
@@ -122,8 +134,7 @@ export default function AcademicYear() {
           mutate();
         }
         if (error) {
-          console.log("deCamp", error);
-          window.alert("Error occurs when delete");
+          window.alert("Error occurs when close the campaign.");
         }
       },
     });
@@ -173,31 +184,36 @@ export default function AcademicYear() {
         Cell: ({ cell }) => {
           return (
             <>
+              {/* {dayjs(cell.getValue("closure_date")).format(
+                "MMM DD, YYYY - HH:mm A"
+              )} */}
               <Group>
                 <div>
                   <DatePickerInput
-                    dropdownType="modal"
+                    popoverProps={{ withinPortal: true }}
                     variant={"unstyled"}
                     value={dayjs(cell.getValue("closure_date")).toDate()}
+                    minDate={dayjs(cell.getValue("closure_date")).toDate()}
                     onChange={async (e) => {
                       if (
                         dayjs(e) < dayjs(cell.row.original.final_closure_date)
                       ) {
-                        console.log("TRUE");
-
-                        //CONTINUE
-                        //  const { data, error } = await supabase
-                        //    .from("campaigns")
-                        //    .update({
-                        //      closure_date: dayjs(e)
-                        //        .set("hour", 0)
-                        //        .set("minute", 0)
-                        //        .set("second", 0)
-                        //        .toDate(),
-                        //    })
-                        //    .eq("id", cell.row.original.id);
+                        const { data, error } = await supabase
+                          .from("campaigns")
+                          .update({
+                            closure_date: dayjs(e)
+                              .set("hour", 0)
+                              .set("minute", 0)
+                              .set("second", 0)
+                              .toDate(),
+                          })
+                          .eq("id", cell.row.original.id);
+                        if (error) alert("An error occurred!");
+                        else mutate();
                       } else {
-                        console.log("FALSE");
+                        alert(
+                          "The closure date cannot be after the final closure date."
+                        );
                       }
                     }}
                     icon={
@@ -221,15 +237,42 @@ export default function AcademicYear() {
         Cell: ({ cell }) => {
           return (
             <>
+              {/* {dayjs(cell.getValue("final_closure_date")).format(
+                "MMM DD, YYYY - HH:mm A"
+              )} */}
               <Group>
                 <div>
-                  {dayjs(cell.getValue("final_closure_date")).format(
-                    "MMM DD, YYYY HH:mm A"
-                  )}{" "}
+                  <DatePickerInput
+                    popoverProps={{ withinPortal: true }}
+                    variant={"unstyled"}
+                    value={dayjs(cell.getValue("final_closure_date")).toDate()}
+                    onChange={async (e) => {
+                      if (dayjs(e) > dayjs(cell.row.original.closure_date)) {
+                        const { data, error } = await supabase
+                          .from("campaigns")
+                          .update({
+                            final_closure_date: dayjs(e)
+                              .set("hour", 0)
+                              .set("minute", 0)
+                              .set("second", 0)
+                              .toDate(),
+                          })
+                          .eq("id", cell.row.original.id);
+                        if (error) alert("An error occurred.");
+                        else mutate();
+                      } else {
+                        alert(
+                          "The final closure date cannot be before the closure date."
+                        );
+                      }
+                    }}
+                    icon={
+                      <ActionIcon>
+                        <IconEdit size={"xs"} />
+                      </ActionIcon>
+                    }
+                  />
                 </div>
-                <ActionIcon>
-                  <IconEdit size={"xs"} />
-                </ActionIcon>
               </Group>
             </>
           );
@@ -276,9 +319,9 @@ export default function AcademicYear() {
                 <IconEdit />
               </ActionIcon>
             </Tooltip>
-            <Tooltip withArrow position="right" label="Delete">
+            <Tooltip withArrow position="right" label="Close Campaign">
               <ActionIcon color="red" onClick={() => handleDeleteRow(row)}>
-                <IconTrash />
+                <IconLock />
               </ActionIcon>
             </Tooltip>
           </Box>
@@ -435,10 +478,22 @@ export const UpdateExistCampaignModal = ({ table, row }) => {
   }, [supabase]);
   useEffect(() => console.log(form.values), [form.values]);
 
-  const handleSubmit = form.onSubmit((values) => {
-    //put your validation logic here
-    // onSubmit(values);
-    // onClose();
+  const handleSubmit = form.onSubmit(async (values) => {
+    const { data, error } = await supabase
+      .from("campaigns")
+      .update({
+        name: values.name,
+        closure_date: dayjs(values.closure[0]).toDate(),
+        final_closure_date: dayjs(values.closure[1]).toDate(),
+      })
+      .select("id")
+      .eq("id", row.original.id);
+    if (data) {
+      mutate("campaigns");
+      modals.close("THIS2010");
+      form.reset();
+    }
+    if (error) alert("An error occurred when trying to update the campaign.");
   });
 
   return (
@@ -454,9 +509,10 @@ export const UpdateExistCampaignModal = ({ table, row }) => {
           {...form.getInputProps("name")}
           placeholder="Type campaign name"
         />
-        {/* <DatePickerInput
+        <DatePickerInput
           type="range"
           // dropdownType="modal"
+          popoverProps={{ withinPortal: true }}
           label={
             <Group spacing={"sm"}>
               <Text>Closure Date - Final Closure Date</Text>
@@ -470,9 +526,9 @@ export const UpdateExistCampaignModal = ({ table, row }) => {
             </Group>
           }
           placeholder="Pick dates"
-          minDate={dayjs(Date.now()).add(1, "day").toDate()}
+          minDate={dayjs(row.original.closure_date).toDate()}
           {...form.getInputProps("closure")}
-        /> */}
+        />
         <Select
           disabled
           required
