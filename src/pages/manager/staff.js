@@ -12,7 +12,7 @@ import {
   Textarea,
   TextInput,
   Title,
-  Tooltip, 
+  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
@@ -590,7 +590,9 @@ export const UpdateExistModal = ({ table, row }) => {
           required
           withAsterisk
           label="Role"
-          placeholder="Pick role"
+          placeholder={
+            row.original.role_id == 3 ? "QA Coordinator" : "Pick role"
+          }
           data={roleList}
           searchable={true}
           {...newStaffForm.getInputProps("role_id")}

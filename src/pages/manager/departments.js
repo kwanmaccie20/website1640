@@ -2,23 +2,28 @@ import {
   ActionIcon,
   Box,
   Button,
-  Flex,
   Group,
-  Modal,
+  MultiSelect,
   Select,
   Stack,
   Text,
   TextInput,
-  Title,
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { closeModal, modals } from "@mantine/modals";
+import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconEdit,
+  IconTrash,
+  IconUserMinus,
+  IconUserPlus,
+} from "@tabler/icons-react";
 import { MantineReactTable } from "mantine-react-table";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 
 export default function Department() {
@@ -56,30 +61,64 @@ export default function Department() {
     });
   };
 
-  const handleDeleteRow = (row) => {
+  const handleDeleteRow = async (row) => {
+    const { count } = await supabase
+      .from("staff")
+      .select("id", { count: "exact" })
+      .eq("department_id", row.original.id);
     modals.openConfirmModal({
       title: "Please confirm your action",
       children: (
-        <Text size="sm">Are you sure to delete {row.getValue("name")}?</Text>
+        <>
+          <Text size="sm">Are you sure to delete {row.getValue("name")}?</Text>
+          <Text size="sm">
+            A staff of {count} will be removed from this department.
+          </Text>
+        </>
       ),
       labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
       onCancel: () => modals.closeAll(),
       onConfirm: async () => {
         const { error, data } = await supabase
           .from("departments")
           .delete()
           .eq("id", row.original.id)
-          .select("id")
+          .select("coordinator_id")
           .single();
         if (data) {
-          modals.closeAll();
-          mutate();
+          const { error } = await supabase
+            .from("staff")
+            .update("role_id", 4)
+            .eq("id", data.coordinator_id);
+          if (error) {
+            window.alert("Error occurs when delete");
+          } else {
+            modals.closeAll();
+            mutate();
+          }
         }
         if (error) {
           console.log("delDept", error);
           window.alert("Error occurs when delete");
         }
       },
+    });
+  };
+
+  const handleAddMembers = async (row) => {
+    modals.open({
+      title: "Add members",
+      children: <AddNewMembers row={row} mutate={mutate} />,
+      size: "lg",
+    });
+  };
+
+  const handleRemoveMembers = async (row) => {
+    modals.open({
+      title: "Remove members",
+      children: <RemoveMembers row={row} mutate={mutate} />,
+      size: "lg",
     });
   };
 
@@ -91,7 +130,7 @@ export default function Department() {
       },
       {
         accessorKey: "staff.email",
-        header: "Coordinator Email",
+        header: "Coordinator",
       },
     ],
     []
@@ -127,6 +166,16 @@ export default function Department() {
             <Tooltip withArrow position="right" label="Delete">
               <ActionIcon color="red" onClick={() => handleDeleteRow(row)}>
                 <IconTrash />{" "}
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip withArrow position="right" label="Add member">
+              <ActionIcon onClick={() => handleAddMembers(row)}>
+                <IconUserPlus />
+              </ActionIcon>
+            </Tooltip>
+            <Tooltip withArrow position="right" label="Remove member">
+              <ActionIcon onClick={() => handleRemoveMembers(row)}>
+                <IconUserMinus />
               </ActionIcon>
             </Tooltip>
           </Box>
@@ -326,6 +375,155 @@ function UpdateModal({ mutate, row }) {
           </Button>
           <Button color={theme.fn.primaryColor()} type="submit">
             Create
+          </Button>
+        </Group>
+      </Stack>
+    </form>
+  );
+}
+
+function AddNewMembers({ row, mutate }) {
+  const supabase = useSupabaseClient();
+  const theme = useMantineTheme();
+  const [freeStaff, setFreeStaff] = useState([]);
+  const form = useForm({
+    initialValues: {
+      members: [],
+    },
+  });
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("staff")
+        .select("id, email")
+        .is("department_id", null)
+        .neq("role_id", 2);
+      if (error) {
+        console.log(error);
+        throw new Error(error);
+      }
+      if (data) {
+        setFreeStaff(data);
+      }
+    })();
+  }, [supabase]);
+  const handleSubmit = form.onSubmit(async (values) => {
+    const { data, error } = await supabase
+      .from("staff")
+      .update({ department_id: row.original.id })
+      .in("id", values.members)
+      .select("id");
+    if (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+    if (data) {
+      notifications.show({
+        title: "Member added successfully",
+        message: `${values.members.length} member${
+          values.members.length == 1 ? " has" : "s have"
+        } been added`,
+        icon: <IconCheck />,
+      });
+      mutate();
+      modals.closeAll();
+    }
+  });
+  return (
+    <form onSubmit={handleSubmit}>
+      <Stack>
+        <MultiSelect
+          data={freeStaff.map((s) => ({ label: s.email, value: s.id }))}
+          clearable
+          label="Select member"
+          searchable
+          required
+          withinPortal
+          {...form.getInputProps("members")}
+        />
+        <Group position="right">
+          <Button variant="light" onClick={modals.closeAll}>
+            Cancel
+          </Button>
+          <Button
+            color={theme.fn.primaryColor()}
+            type="submit"
+            disabled={form.values.members.length == 0}
+          >
+            Create
+          </Button>
+        </Group>
+      </Stack>
+    </form>
+  );
+}
+
+function RemoveMembers({ row, mutate }) {
+  const supabase = useSupabaseClient();
+  const theme = useMantineTheme();
+  const [member, setMember] = useState([]);
+  const form = useForm({
+    initialValues: {
+      currentMember: member,
+    },
+  });
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("staff")
+        .select("id, email")
+        .eq("department_id", row.original.id);
+      if (error) {
+        console.log(error);
+        throw new Error(error.message);
+      }
+      if (data) {
+        setMember(data.filter((m) => m.id !== row.original.coordinator_id));
+      }
+    })();
+  }, [row.original.coordinator_id, row.original.id, supabase]);
+
+  const handleSubmit = form.onSubmit(async (values) => {
+    const { data, error } = await supabase
+      .from("staff")
+      .update({ department_id: null })
+      .in("id", values.currentMember)
+      .select("id");
+    if (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+    if (data) {
+      notifications.show({
+        title: "Member removed successfully",
+        message: `${values.currentMember.length} member${
+          values.currentMember.length == 1 ? " has" : "s have"
+        } been removed`,
+        icon: <IconCheck />,
+      });
+      mutate();
+      modals.closeAll();
+    }
+  });
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <Stack>
+        <MultiSelect
+          data={member.map((s) => ({ label: s.email, value: s.id }))}
+          clearable
+          label="Select member to remove"
+          searchable
+          required
+          withinPortal
+          {...form.getInputProps("currentMember")}
+        />
+        <Group position="right">
+          <Button variant="light" onClick={modals.closeAll}>
+            Cancel
+          </Button>
+          <Button color="red" type="submit" disabled={!form.isDirty()}>
+            Remove
           </Button>
         </Group>
       </Stack>

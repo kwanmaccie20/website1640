@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["ABCDEFGHIJKLMNOPQRSTUVXWYZ"]
+  "cSpell.words": ["ABCDEFGHIJKLMNOPQRSTUVXWYZ"],
+  "editor.acceptSuggestionOnEnter": "off"
 }

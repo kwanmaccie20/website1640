@@ -8,6 +8,7 @@ import { Inter, Poppins } from "next/font/google";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { ModalsProvider } from "@mantine/modals";
+import { Notifications } from "@mantine/notifications";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -66,6 +67,7 @@ export default function App({ Component, pageProps }) {
             }}
           >
             <ModalsProvider>
+              <Notifications position="top-right" />
               <div className={`${poppins.variable} font-sans`}>
                 {router.pathname.startsWith("/auth") ? (
                   <Component {...pageProps} />
