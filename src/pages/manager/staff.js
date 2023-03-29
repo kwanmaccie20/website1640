@@ -17,8 +17,9 @@ import {
 } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
 import { closeModal, modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconCheck, IconEdit, IconTrash, IconX } from "@tabler/icons-react";
 import { MantineReactTable } from "mantine-react-table";
 import { title } from "process";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -55,8 +56,17 @@ export default function Department() {
     const getRes = await res.json();
     if (getRes?.data) {
       mutate([...tableData, getRes.data]);
+      notifications.show({
+        title: "Staff added successfully",
+        icon: <IconCheck />,
+      });
     } else {
-      alert("We are having trouble adding new staff to the system.");
+      notifications.show({
+        title: "An error occurs",
+        message: `Could not add staff information`,
+        icon: <IconX />,
+        color: "red",
+      });
     }
   };
 
@@ -88,9 +98,18 @@ export default function Department() {
           const getRes = await res.json();
           console.log("----", getRes);
           if (getRes?.data) {
+            notifications.show({
+              title: "Staff deleted successfully",
+              icon: <IconCheck />,
+            });
             mutate();
           } else {
-            alert("We are having trouble deleting the staff.");
+            notifications.show({
+              title: "An error occurs",
+              message: `Could not delete staff information`,
+              icon: <IconX />,
+              color: "red",
+            });
           }
         },
       });
@@ -480,7 +499,12 @@ export const UpdateExistModal = ({ table, row }) => {
       .eq("id", row.original.id)
       .select("id");
     if (error) {
-      alert("We are having trouble updating staff information.");
+      notifications.show({
+        title: "An error occurs",
+        message: `Could not update staff information`,
+        icon: <IconX />,
+        color: "red",
+      });
     }
     if (data) {
       //Update coordinator of the department
@@ -512,6 +536,10 @@ export const UpdateExistModal = ({ table, row }) => {
       //     .eq("id", val.department_id);
       // }
       modals.close("20092001");
+      notifications.show({
+        title: "Staff updated successfully",
+        icon: <IconCheck />,
+      });
       mtate("staff");
     }
   });

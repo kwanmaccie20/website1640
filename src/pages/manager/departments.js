@@ -21,6 +21,7 @@ import {
   IconTrash,
   IconUserMinus,
   IconUserPlus,
+  IconX,
 } from "@tabler/icons-react";
 import { MantineReactTable } from "mantine-react-table";
 import { useEffect, useMemo, useState } from "react";
@@ -92,10 +93,19 @@ export default function Department() {
             .update("role_id", 4)
             .eq("id", data.coordinator_id);
           if (error) {
-            window.alert("Error occurs when delete");
+            notifications.show({
+              title: "An error occurs",
+              message: `Could not delete department information`,
+              icon: <IconX />,
+              color: "red",
+            });
           } else {
             modals.closeAll();
             mutate();
+            notifications.show({
+              title: "Department deleted successfully",
+              icon: <IconCheck />,
+            });
           }
         }
         if (error) {
@@ -229,7 +239,12 @@ function CreateNewModal({ mutate }) {
       .single();
     if (error) {
       console.log(error);
-      throw new Error(error.message);
+      notifications.show({
+        title: "An error occurs",
+        message: `Could not add department information`,
+        icon: <IconX />,
+        color: "red",
+      });
     }
     if (data) {
       const { data: st, error: stErr } = await supabase
@@ -243,9 +258,18 @@ function CreateNewModal({ mutate }) {
         .single();
       if (stErr) {
         console.log(stErr);
-        throw new Error(stErr.message);
+        notifications.show({
+          title: "An error occurs",
+          message: `Could not add department information`,
+          icon: <IconX />,
+          color: "red",
+        });
       }
       if (st) {
+        notifications.show({
+          title: "Department added successfully",
+          icon: <IconCheck />,
+        });
         modals.closeAll();
         mutate();
       }
@@ -322,7 +346,12 @@ function UpdateModal({ mutate, row }) {
       .single();
     if (error) {
       console.log(error);
-      throw new Error(error.message);
+      notifications.show({
+        title: "An error occurs",
+        message: `Could not update department information`,
+        icon: <IconX />,
+        color: "red",
+      });
     }
     if (data) {
       const { data: st, error: stErr } = await supabase
@@ -344,9 +373,18 @@ function UpdateModal({ mutate, row }) {
         .single();
       if (stErr || ostErr) {
         console.log(stErr, ostErr);
-        throw new Error(stErr?.message + "\n" + ostErr?.message);
+        notifications.show({
+          title: "An error occurs",
+          message: `Could not update department information`,
+          icon: <IconX />,
+          color: "red",
+        });
       }
       if (st && ost) {
+        notifications.show({
+          title: "Department information updated successfully",
+          icon: <IconCheck />,
+        });
         modals.closeAll();
         mutate();
       }
@@ -415,7 +453,12 @@ function AddNewMembers({ row, mutate }) {
       .select("id");
     if (error) {
       console.log(error);
-      throw new Error(error.message);
+      notifications.show({
+        title: "An error occurs",
+        message: `Could not add members`,
+        icon: <IconX />,
+        color: "red",
+      });
     }
     if (data) {
       notifications.show({
@@ -491,7 +534,12 @@ function RemoveMembers({ row, mutate }) {
       .select("id");
     if (error) {
       console.log(error);
-      throw new Error(error.message);
+      notifications.show({
+        title: "An error occurs",
+        message: `Could not remove members`,
+        icon: <IconX />,
+        color: "red",
+      });
     }
     if (data) {
       notifications.show({
