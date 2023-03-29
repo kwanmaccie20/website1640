@@ -16,13 +16,16 @@ import {
 import { DateInput, DatePickerInput } from "@mantine/dates";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { closeAllModals, modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
   IconCalendarOff,
+  IconCheck,
   IconEdit,
   IconLock,
   IconQuestionCircle,
   IconTrash,
+  IconX,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { MantineReactTable } from "mantine-react-table";
@@ -68,10 +71,22 @@ export default function AcademicYear() {
       })
       .select("*");
     if (error) {
-      console.log(error);
-      window.alert("Error occurs during insert");
+      mutate([...tableData, data]);
+      notifications.show({
+        title: "The campaign has been added successfully",
+        message: "",
+        icon: <IconX />,
+        color: "red",
+      });
     }
-    if (data) mutate([...tableData, data]);
+    if (data) {
+      mutate([...tableData, data]);
+      notifications.show({
+        title: "The campaign has been added successfully",
+        message: "",
+        icon: <IconCheck />,
+      });
+    }
   };
 
   // const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
@@ -113,8 +128,8 @@ export default function AcademicYear() {
       title: "Close Campaign Now?",
       children: (
         <Text size="sm">
-          Are you sure to close (Do not accept ideas and comments)
-          {row.getValue("name")}?
+          Are you sure to close (Do not accept ideas and comments){" "}
+          <strong>{row.getValue("name")}</strong>?
         </Text>
       ),
       labels: { confirm: "Continue", cancel: "Cancel" },
@@ -130,11 +145,21 @@ export default function AcademicYear() {
           .select("id")
           .single();
         if (data) {
+          notifications.show({
+            title: "The campaign has been closed.",
+            message: "",
+            icon: <IconCheck />,
+          });
           modals.closeAll();
           mutate();
         }
         if (error) {
-          window.alert("Error occurs when close the campaign.");
+          notifications.show({
+            title: "Error occurs when close the campaign.",
+            message: "",
+            icon: <IconX />,
+            color: "red",
+          });
         }
       },
     });
@@ -489,11 +514,23 @@ export const UpdateExistCampaignModal = ({ table, row }) => {
       .select("id")
       .eq("id", row.original.id);
     if (data) {
+      notifications.show({
+        title: "The campaign has been updated successfully",
+        message: "",
+        icon: <IconCheck />,
+      });
       mutate("campaigns");
       modals.close("THIS2010");
       form.reset();
     }
-    if (error) alert("An error occurred when trying to update the campaign.");
+    if (error) {
+      notifications.show({
+        title: "Could not update the campaign.",
+        message: "",
+        icon: <IconX />,
+        color: "red",
+      });
+    }
   });
 
   return (
