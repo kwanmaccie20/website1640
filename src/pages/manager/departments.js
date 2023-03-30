@@ -219,6 +219,7 @@ function CreateNewModal({ mutate }) {
       const { data, error } = await supabase
         .from("staff")
         .select("id, email")
+        .neq("role_id", 2)
         .is("department_id", null);
       if (error) {
         console.log(error);
@@ -321,6 +322,7 @@ function UpdateModal({ mutate, row }) {
       const { data, error } = await supabase
         .from("staff")
         .select("id, email")
+        .neq("role_id", 2)
         .or(`department_id.is.null,department_id.eq.${row.original.id}`);
       if (error) {
         console.log(error);

@@ -14,6 +14,7 @@ import {
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconBell, IconChevronDown, IconMenu2 } from "@tabler/icons-react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function AppHeader({
   toggleDrawer,
@@ -25,6 +26,7 @@ export default function AppHeader({
 }) {
   const theme = useMantineTheme();
   const supabase = useSupabaseClient();
+  const router = useRouter();
   return (
     <Header height={80} className="border-none">
       <div className="flex justify-between items-center pr-4">
@@ -108,8 +110,9 @@ export default function AppHeader({
               <Menu.Item>Profile</Menu.Item>
               <Menu.Item
                 onClick={
-                  () => {
-                    supabase.auth.signOut();
+                  async () => {
+                    const { error } = await supabase.auth.signOut();
+                    if (!error) router.reload();
                   }
                   // router.push("/");
                 }

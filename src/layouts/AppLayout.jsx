@@ -48,6 +48,8 @@ export default function AppLayout({ children }) {
     };
     if (user) {
       getRole();
+    } else {
+      router.push("/auth");
     }
   }, [router, supabase, user]);
   if (user)
