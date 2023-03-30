@@ -1,22 +1,11 @@
-import {
-  Alert,
-  Anchor,
-  Button,
-  Center,
-  Image,
-  PasswordInput,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
-import React, { useState } from "react";
-import { useForm } from "@mantine/form";
 import styles from "@/styles/styles.module.css";
-import Link from "next/link";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { useRef } from "react";
-import { useRouter } from "next/router";
+import { Alert, Anchor, Button, Image, Text, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useRef, useState } from "react";
 
 export default function Index() {
   const router = useRouter();
@@ -41,7 +30,6 @@ export default function Index() {
   });
   const handleSubmit = form.onSubmit(async (val) => {
     const credential = { username: val.uname, password: val.password };
-    console.log(credential);
     setErr([]);
     setProcessing(true);
     if (true) {
@@ -50,10 +38,11 @@ export default function Index() {
       //   "I'm sorry, I'm unable to log you in at this time. Please check your credentials and try again later. If the issue persists, please contact us for further assistance.",
       // ]);
       // setProcessing(false);
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: credential.username,
-        password: credential.password,
-      });
+      const { data: signedData, error } =
+        await supabase.auth.signInWithPassword({
+          email: credential.username,
+          password: credential.password,
+        });
       if (error) {
         console.log(error);
         setErr((cval) => [...cval, "Password or email is incorrect."]);

@@ -1,3 +1,4 @@
+import AppLayout from "@/layouts/AppLayout";
 import {
   ActionIcon,
   Box,
@@ -147,7 +148,7 @@ export default function Department() {
   );
 
   return (
-    <>
+    <AppLayout title={"Department Management"}>
       <MantineReactTable
         columns={columns}
         data={tableData ?? []}
@@ -200,7 +201,7 @@ export default function Department() {
           </Button>
         )}
       />
-    </>
+    </AppLayout>
   );
 }
 
@@ -579,12 +580,4 @@ function RemoveMembers({ row, mutate }) {
       </Stack>
     </form>
   );
-}
-
-export async function getStaticProps(ctx) {
-  return {
-    props: {
-      title: "Department Management",
-    },
-  };
 }

@@ -1,3 +1,4 @@
+import AppLayout from "@/layouts/AppLayout";
 import {
   ActionIcon,
   Box,
@@ -277,7 +278,7 @@ export default function AcademicYear() {
   );
 
   return (
-    <>
+    <AppLayout title={"Campaign Management"}>
       <MantineReactTable
         columns={columns}
         data={tableData ?? []}
@@ -329,7 +330,7 @@ export default function AcademicYear() {
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
       />
-    </>
+    </AppLayout>
   );
 }
 
@@ -555,13 +556,3 @@ export const UpdateExistCampaignModal = ({ table, row }) => {
     </form>
   );
 };
-
-const validateRequired = (value) => !!value.length;
-
-export async function getStaticProps(ctx) {
-  return {
-    props: {
-      title: "Campaigns Management",
-    },
-  };
-}

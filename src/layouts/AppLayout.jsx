@@ -22,7 +22,7 @@ import React, { useEffect, useState } from "react";
 import AppHeader from "./AppHeader";
 import AppSidebar from "./AppSidebar";
 
-export default function AppLayout({ children }) {
+export default function AppLayout({ children, title }) {
   const [drawerOpened, { close: closeDrawer, toggle: toggleDrawer }] =
     useDisclosure(false);
   const [navOpened, { close: closeNav, toggle: toggleNav }] =
@@ -36,22 +36,23 @@ export default function AppLayout({ children }) {
   const router = useRouter();
   useEffect(() => {
     const getRole = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) return router.push("/auth");
       const { data, error } = await supabase
         .from("staff")
         .select("first_name,roles(title)")
-        .eq("id", user?.id)
+        .eq("id", session.user.id)
         .single();
       if (data) {
         setRole(data.roles.title);
         setName(data.first_name);
       }
     };
-    if (user) {
-      getRole();
-    } else {
-      router.push("/auth");
-    }
-  }, [router, supabase, user]);
+    getRole();
+  }, [router, supabase]);
+
   if (user)
     return (
       <>
@@ -61,7 +62,7 @@ export default function AppLayout({ children }) {
               toggleDrawer={toggleDrawer}
               toggleNav={toggleNav}
               navOpened={navOpened}
-              title={children.props.title}
+              title={title}
               user={user}
               name={name}
             />

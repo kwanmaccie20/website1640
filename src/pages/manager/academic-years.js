@@ -1,3 +1,4 @@
+import AppLayout from "@/layouts/AppLayout";
 import {
   ActionIcon,
   Box,
@@ -184,7 +185,7 @@ export default function AcademicYear() {
   );
 
   return (
-    <>
+    <AppLayout title={"Academic Year Management"}>
       <MantineReactTable
         columns={columns}
         data={tableData ?? []}
@@ -236,7 +237,7 @@ export default function AcademicYear() {
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
       />
-    </>
+    </AppLayout>
   );
 }
 
@@ -288,11 +289,3 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
 };
 
 const validateRequired = (value) => !!value.length;
-
-export async function getStaticProps(ctx) {
-  return {
-    props: {
-      title: "Academic Year Management",
-    },
-  };
-}

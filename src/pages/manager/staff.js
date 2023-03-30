@@ -1,3 +1,4 @@
+import AppLayout from "@/layouts/AppLayout";
 import {
   ActionIcon,
   Box,
@@ -192,7 +193,7 @@ export default function Department() {
   );
 
   return (
-    <>
+    <AppLayout title={"Staff Management"}>
       <MantineReactTable
         columns={columns}
         data={tableData ?? []}
@@ -243,7 +244,7 @@ export default function Department() {
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
       />
-    </>
+    </AppLayout>
   );
 }
 
@@ -637,11 +638,3 @@ export const UpdateExistModal = ({ table, row }) => {
     </form>
   );
 };
-
-export async function getStaticProps(ctx) {
-  return {
-    props: {
-      title: "Staff Management",
-    },
-  };
-}
