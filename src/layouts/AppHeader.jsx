@@ -46,7 +46,7 @@ export default function AppHeader({
             }`}
           >
             {/* logo here */}
-            <Image src="/next.svg" fill alt="Logo" className="lg:p-5 p-2" />
+            <Image src="/Logo.svg" fill alt="Logo" className="lg:p-5 p-2" />
           </Box>
           {/* In large screen */}
           <MediaQuery smallerThan="lg" styles={{ display: "none" }}>
