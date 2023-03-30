@@ -5,6 +5,7 @@ import {
   IconCompass,
   IconConfetti,
   IconDashboard,
+  IconHash,
   IconHierarchy2,
   IconInfoCircle,
   IconUsers,
@@ -49,14 +50,9 @@ export const headerLinks = {
       icon: IconCompass,
     },
     {
-      label: "Academic Years",
-      href: "/manager/academic-years",
-      icon: IconCalendarTime,
-    },
-    {
-      label: "Campaigns",
-      href: "/manager/campaigns",
-      icon: IconConfetti,
+      label: "Staff",
+      href: "/manager/staff",
+      icon: IconUsers,
     },
     {
       label: "Departments",
@@ -64,9 +60,24 @@ export const headerLinks = {
       icon: IconHierarchy2,
     },
     {
-      label: "Staff",
-      href: "/manager/staff",
-      icon: IconUsers,
+      label: "Campaigns",
+      href: "/manager/campaigns",
+      icon: IconConfetti,
+    },
+    {
+      label: "Ideas",
+      href: "/manager/ideas",
+      icon: IconBulb,
+    },
+    {
+      label: "Tags",
+      href: "/manager/tags",
+      icon: IconHash,
+    },
+    {
+      label: "Academic Years",
+      href: "/manager/academic-years",
+      icon: IconCalendarTime,
     },
     {
       label: "About",

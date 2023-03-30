@@ -1,9 +1,7 @@
 import { headerLinks } from "@/constants/headerLinks";
 import {
-  Affix,
   AppShell,
   Box,
-  Button,
   Container,
   Drawer,
   MediaQuery,
@@ -15,10 +13,11 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { IconMoonStars, IconSun } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AppHeader from "./AppHeader";
 import AppSidebar from "./AppSidebar";
 
@@ -27,8 +26,8 @@ export default function AppLayout({ children }) {
     useDisclosure(false);
   const [navOpened, { close: closeNav, toggle: toggleNav }] =
     useDisclosure(false);
-  const { toggleColorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
+  const { toggleColorScheme } = useMantineColorScheme();
   const supabase = useSupabaseClient();
   const user = useUser();
   const [name, setName] = useState("");
@@ -157,13 +156,36 @@ export default function AppLayout({ children }) {
                       icon={<l.icon strokeWidth={1.5} />}
                     />
                   ))}
+              <NavLink
+                py="md"
+                px={"xl"}
+                label={<Text size={"md"}>Display</Text>}
+                className="transition-all"
+                onClick={() => toggleColorScheme()}
+                styles={(theme) => ({
+                  root: {
+                    "&:hover": {
+                      background: theme.fn.gradient({
+                        from: "transparent",
+                        to: theme.fn.rgba(theme.fn.primaryColor(), 0.5),
+                        deg: 45,
+                      }),
+                      borderRight: `7px solid ${theme.fn.primaryColor()}`,
+                      borderRadius: "0 3px 3px 0",
+                    },
+                  },
+                })}
+                icon={
+                  theme.colorScheme == "dark" ? (
+                    <IconSun strokeWidth={1.5} />
+                  ) : (
+                    <IconMoonStars strokeWidth={1.5} />
+                  )
+                }
+              />
             </Stack>
           </Drawer>
         </MediaQuery>
-
-        <Affix>
-          <Button onClick={() => toggleColorScheme()}>Toggle scheme</Button>
-        </Affix>
       </>
     );
 }

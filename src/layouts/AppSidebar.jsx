@@ -8,20 +8,23 @@ import {
   Stack,
   Text,
   Tooltip,
+  useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
+import { IconMoonStars, IconSun } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Fragment } from "react";
 
 export default function AppSidebar({ navOpened, role }) {
   const theme = useMantineTheme();
   const router = useRouter();
+  const { toggleColorScheme } = useMantineColorScheme();
   if (role === "qa_manager")
     return (
       <MediaQuery smallerThan={"md"} styles={{ display: "none" }}>
         <Navbar
           width={{ base: 80, lg: navOpened ? 288 : 80 }}
-          height={"100%"}
           hiddenBreakpoint="md"
           hidden={!navOpened}
           style={{
@@ -34,10 +37,11 @@ export default function AppSidebar({ navOpened, role }) {
           className="transition-[width] ease duration-300 py-3"
         >
           <MediaQuery smallerThan={"lg"} styles={{ display: "none" }}>
-            <ScrollArea scrollbarSize={2}>
+            <ScrollArea>
               <Stack>
-                {navOpened
-                  ? headerLinks.qaManager.map((l, i) => (
+                {navOpened ? (
+                  <Fragment>
+                    {headerLinks.qaManager.map((l, i) => (
                       <NavLink
                         component={Link}
                         href={l.href}
@@ -63,8 +67,38 @@ export default function AppSidebar({ navOpened, role }) {
                         })}
                         icon={<l.icon strokeWidth={1.5} />}
                       />
-                    ))
-                  : headerLinks.qaManager.map((l, i) => (
+                    ))}
+                    <NavLink
+                      py="md"
+                      px={"xl"}
+                      label={<Text size={"md"}>Display</Text>}
+                      className="transition-all"
+                      onClick={() => toggleColorScheme()}
+                      styles={(theme) => ({
+                        root: {
+                          "&:hover": {
+                            background: theme.fn.gradient({
+                              from: "transparent",
+                              to: theme.fn.rgba(theme.fn.primaryColor(), 0.5),
+                              deg: 45,
+                            }),
+                            borderRight: `7px solid ${theme.fn.primaryColor()}`,
+                            borderRadius: "0 3px 3px 0",
+                          },
+                        },
+                      })}
+                      icon={
+                        theme.colorScheme == "dark" ? (
+                          <IconSun strokeWidth={1.5} />
+                        ) : (
+                          <IconMoonStars strokeWidth={1.5} />
+                        )
+                      }
+                    />
+                  </Fragment>
+                ) : (
+                  <Fragment>
+                    {headerLinks.qaManager.map((l, i) => (
                       <Tooltip.Floating label={l.label} key={i}>
                         <NavLink
                           component={Link}
@@ -95,11 +129,41 @@ export default function AppSidebar({ navOpened, role }) {
                         />
                       </Tooltip.Floating>
                     ))}
+                    <Tooltip.Floating label="Display">
+                      <NavLink
+                        variant="filled"
+                        styles={(theme) => ({
+                          root: {
+                            "&:hover": {
+                              background: theme.fn.gradient({
+                                from: "transparent",
+                                to: theme.fn.rgba(theme.fn.primaryColor(), 0.5),
+                                deg: 45,
+                              }),
+                            },
+                          },
+                        })}
+                        className="rounded-md"
+                        py="md"
+                        onClick={() => toggleColorScheme()}
+                        label={
+                          <Center>
+                            {theme.colorScheme == "dark" ? (
+                              <IconSun strokeWidth={1.5} />
+                            ) : (
+                              <IconMoonStars strokeWidth={1.5} />
+                            )}
+                          </Center>
+                        }
+                      />
+                    </Tooltip.Floating>
+                  </Fragment>
+                )}
               </Stack>
             </ScrollArea>
           </MediaQuery>
           <MediaQuery largerThan={"lg"} styles={{ display: "none" }}>
-            <ScrollArea>
+            <ScrollArea scrollbarSize={2}>
               <Stack>
                 {headerLinks.qaManager.map((l, i) => (
                   <Tooltip.Floating label={l.label} key={i}>
@@ -129,6 +193,34 @@ export default function AppSidebar({ navOpened, role }) {
                     />
                   </Tooltip.Floating>
                 ))}
+                <Tooltip.Floating label="Display">
+                  <NavLink
+                    variant="filled"
+                    styles={(theme) => ({
+                      root: {
+                        "&:hover": {
+                          background: theme.fn.gradient({
+                            from: "transparent",
+                            to: theme.fn.rgba(theme.fn.primaryColor(), 0.5),
+                            deg: 45,
+                          }),
+                        },
+                      },
+                    })}
+                    className="rounded-md"
+                    py="md"
+                    onClick={() => toggleColorScheme()}
+                    label={
+                      <Center>
+                        {theme.colorScheme == "dark" ? (
+                          <IconSun strokeWidth={1.5} />
+                        ) : (
+                          <IconMoonStars strokeWidth={1.5} />
+                        )}
+                      </Center>
+                    }
+                  />
+                </Tooltip.Floating>
               </Stack>
             </ScrollArea>
           </MediaQuery>
@@ -140,7 +232,6 @@ export default function AppSidebar({ navOpened, role }) {
       <MediaQuery smallerThan={"md"} styles={{ display: "none" }}>
         <Navbar
           width={{ base: 80, lg: navOpened ? 288 : 80 }}
-          height={"100%"}
           hiddenBreakpoint="md"
           hidden={!navOpened}
           style={{
@@ -153,10 +244,11 @@ export default function AppSidebar({ navOpened, role }) {
           className="transition-[width] ease duration-300 py-3"
         >
           <MediaQuery smallerThan={"lg"} styles={{ display: "none" }}>
-            <ScrollArea scrollbarSize={2}>
+            <ScrollArea>
               <Stack>
-                {navOpened
-                  ? headerLinks.staff.map((l, i) => (
+                {navOpened ? (
+                  <Fragment>
+                    {headerLinks.staff.map((l, i) => (
                       <NavLink
                         component={Link}
                         href={l.href}
@@ -182,8 +274,38 @@ export default function AppSidebar({ navOpened, role }) {
                         })}
                         icon={<l.icon strokeWidth={1.5} />}
                       />
-                    ))
-                  : headerLinks.staff.map((l, i) => (
+                    ))}
+                    <NavLink
+                      py="md"
+                      px={"xl"}
+                      label={<Text size={"md"}>Display</Text>}
+                      className="transition-all"
+                      onClick={() => toggleColorScheme()}
+                      styles={(theme) => ({
+                        root: {
+                          "&:hover": {
+                            background: theme.fn.gradient({
+                              from: "transparent",
+                              to: theme.fn.rgba(theme.fn.primaryColor(), 0.5),
+                              deg: 45,
+                            }),
+                            borderRight: `7px solid ${theme.fn.primaryColor()}`,
+                            borderRadius: "0 3px 3px 0",
+                          },
+                        },
+                      })}
+                      icon={
+                        theme.colorScheme == "dark" ? (
+                          <IconSun strokeWidth={1.5} />
+                        ) : (
+                          <IconMoonStars strokeWidth={1.5} />
+                        )
+                      }
+                    />
+                  </Fragment>
+                ) : (
+                  <Fragment>
+                    {headerLinks.staff.map((l, i) => (
                       <Tooltip.Floating label={l.label} key={i}>
                         <NavLink
                           component={Link}
@@ -214,11 +336,41 @@ export default function AppSidebar({ navOpened, role }) {
                         />
                       </Tooltip.Floating>
                     ))}
+                    <Tooltip.Floating label="Display">
+                      <NavLink
+                        variant="filled"
+                        styles={(theme) => ({
+                          root: {
+                            "&:hover": {
+                              background: theme.fn.gradient({
+                                from: "transparent",
+                                to: theme.fn.rgba(theme.fn.primaryColor(), 0.5),
+                                deg: 45,
+                              }),
+                            },
+                          },
+                        })}
+                        className="rounded-md"
+                        py="md"
+                        onClick={() => toggleColorScheme()}
+                        label={
+                          <Center>
+                            {theme.colorScheme == "dark" ? (
+                              <IconSun strokeWidth={1.5} />
+                            ) : (
+                              <IconMoonStars strokeWidth={1.5} />
+                            )}
+                          </Center>
+                        }
+                      />
+                    </Tooltip.Floating>
+                  </Fragment>
+                )}
               </Stack>
             </ScrollArea>
           </MediaQuery>
           <MediaQuery largerThan={"lg"} styles={{ display: "none" }}>
-            <ScrollArea>
+            <ScrollArea scrollbarSize={2}>
               <Stack>
                 {headerLinks.staff.map((l, i) => (
                   <Tooltip.Floating label={l.label} key={i}>
@@ -248,6 +400,34 @@ export default function AppSidebar({ navOpened, role }) {
                     />
                   </Tooltip.Floating>
                 ))}
+                <Tooltip.Floating label="Display">
+                  <NavLink
+                    variant="filled"
+                    styles={(theme) => ({
+                      root: {
+                        "&:hover": {
+                          background: theme.fn.gradient({
+                            from: "transparent",
+                            to: theme.fn.rgba(theme.fn.primaryColor(), 0.5),
+                            deg: 45,
+                          }),
+                        },
+                      },
+                    })}
+                    className="rounded-md"
+                    py="md"
+                    onClick={() => toggleColorScheme()}
+                    label={
+                      <Center>
+                        {theme.colorScheme == "dark" ? (
+                          <IconSun strokeWidth={1.5} />
+                        ) : (
+                          <IconMoonStars strokeWidth={1.5} />
+                        )}
+                      </Center>
+                    }
+                  />
+                </Tooltip.Floating>
               </Stack>
             </ScrollArea>
           </MediaQuery>
