@@ -93,16 +93,10 @@ export default function AppLayout({ children }) {
             onClose={closeDrawer}
             title={
               <Box
-                style={{
-                  backgroundColor:
-                    theme.colorScheme === "dark"
-                      ? theme.colors.dark[6]
-                      : theme.colors.gray[2],
-                }}
                 className={` relative flex justify-center items-center w-52 h-20`}
               >
                 {/* logo here */}
-                <Image src="/next.svg" fill alt="Logo" className="lg:p-5 p-2" />
+                <Image src="/Logo.svg" fill alt="Logo" className="lg:p-5 p-2" />
               </Box>
             }
             size="288px"

@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Box,
+  createStyles,
   Group,
   Header,
   MediaQuery,
@@ -16,6 +17,20 @@ import { IconBell, IconChevronDown, IconMenu2 } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
+const useStyle = createStyles((theme) => ({
+  logo: {
+    [theme.fn.smallerThan("md")]: {
+      backgroundColor: "transparent",
+    },
+    [theme.fn.largerThan("md")]: {
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[6]
+          : theme.colors.gray[2],
+    },
+  },
+}));
+
 export default function AppHeader({
   toggleDrawer,
   toggleNav,
@@ -27,23 +42,24 @@ export default function AppHeader({
   const theme = useMantineTheme();
   const supabase = useSupabaseClient();
   const router = useRouter();
+  const { classes } = useStyle();
   return (
     <Header height={80} className="border-none">
       <div className="flex justify-between items-center pr-4">
         {/* Menu button and logo */}
         <Group>
           <Box
-            style={{
-              backgroundColor:
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[6]
-                  : theme.colors.gray[2],
-            }}
-            className={` relative flex justify-center items-center w-20 h-20 ${
+            // style={{
+            //   backgroundColor:
+            //     theme.colorScheme === "dark"
+            //       ? theme.colors.dark[6]
+            //       : theme.colors.gray[2],
+            // }}
+            className={`relative flex justify-center items-center w-20 h-20 ${
               navOpened
                 ? "lg:w-72"
                 : "lg:w-20 transition-[width] ease duration-300"
-            }`}
+            } ${classes.logo}`}
           >
             {/* logo here */}
             <Image src="/Logo.svg" fill alt="Logo" className="lg:p-5 p-2" />
