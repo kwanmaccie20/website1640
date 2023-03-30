@@ -134,7 +134,11 @@ export default function Index() {
                 Login
               </Button>
               <Text size={"sm "}>
-                Forgot password, <Link href={"/auth/reset"}>reset</Link>?
+                Forgot password,{" "}
+                <Anchor component={Link} href={"/auth/reset"}>
+                  reset
+                </Anchor>
+                ?
               </Text>
             </div>
           </form>

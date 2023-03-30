@@ -4,7 +4,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: "placekitten.com",
+        hostname: "i.pravatar.cc",
       },
     ],
   },

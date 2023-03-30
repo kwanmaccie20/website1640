@@ -10,8 +10,16 @@ export async function middleware(req) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
-  if (session && req.nextUrl.pathname.startsWith("auth")) {
-    return NextResponse.redirect(new URL("/", req.url));
+  // if (!req.nextUrl.pathname.startsWith("/auth")) {
+  if (!session) {
+    return NextResponse.redirect(new URL("/auth/", req.url));
   }
+  // } else {
+  //   if (session) return NextResponse.redirect(new URL("/", req.url));
+  //   else return res;
+  // }
 }
+
+export const config = {
+  matcher: "/",
+};

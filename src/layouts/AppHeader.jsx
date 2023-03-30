@@ -90,11 +90,12 @@ export default function AppHeader({
               >
                 <Group>
                   <Image
-                    src="http://placekitten.com/g/200/300"
+                    src={`https://i.pravatar.cc/150?u=${user.email}`}
                     width={40}
                     height={40}
                     alt="Avt"
                     className="rounded-xl xl:w-12 xl:h-12"
+                    style={{ border: "1px solid" }}
                   />
                   <div className="w-[120px] justify-evenly items-center hidden xl:flex">
                     <Text>{name}</Text>
