@@ -22,7 +22,7 @@ import React, { useEffect, useState } from "react";
 import AppHeader from "./AppHeader";
 import AppSidebar from "./AppSidebar";
 
-export default function AppLayout({ children, title }) {
+export default function AppLayout({ children }) {
   const [drawerOpened, { close: closeDrawer, toggle: toggleDrawer }] =
     useDisclosure(false);
   const [navOpened, { close: closeNav, toggle: toggleNav }] =
@@ -62,7 +62,7 @@ export default function AppLayout({ children, title }) {
               toggleDrawer={toggleDrawer}
               toggleNav={toggleNav}
               navOpened={navOpened}
-              title={title}
+              title={children.props.title}
               user={user}
               name={name}
             />
@@ -110,6 +110,8 @@ export default function AppLayout({ children, title }) {
                       py="md"
                       px={"xl"}
                       key={i}
+                      active={router.pathname == l.href}
+                      variant="filled"
                       label={<Text size={"md"}>{l.label}</Text>}
                       className="transition-all"
                       styles={(theme) => ({
@@ -135,6 +137,8 @@ export default function AppLayout({ children, title }) {
                       py="md"
                       px={"xl"}
                       key={i}
+                      active={router.pathname == l.href}
+                      variant="filled"
                       label={<Text size={"md"}>{l.label}</Text>}
                       className="transition-all"
                       styles={(theme) => ({

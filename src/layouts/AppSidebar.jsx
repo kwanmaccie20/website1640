@@ -11,9 +11,11 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function AppSidebar({ navOpened, role }) {
   const theme = useMantineTheme();
+  const router = useRouter();
   if (role === "qa_manager")
     return (
       <MediaQuery smallerThan={"md"} styles={{ display: "none" }}>
@@ -42,6 +44,8 @@ export default function AppSidebar({ navOpened, role }) {
                         py="md"
                         px={"xl"}
                         key={i}
+                        active={router.pathname == l.href}
+                        variant="filled"
                         label={<Text size={"md"}>{l.label}</Text>}
                         className="transition-all"
                         styles={(theme) => ({
@@ -65,6 +69,8 @@ export default function AppSidebar({ navOpened, role }) {
                         <NavLink
                           component={Link}
                           href={l.href}
+                          active={router.pathname == l.href}
+                          variant="filled"
                           styles={(theme) => ({
                             root: {
                               "&:hover": {
@@ -100,6 +106,8 @@ export default function AppSidebar({ navOpened, role }) {
                     <NavLink
                       component={Link}
                       href={l.href}
+                      active={router.pathname == l.href}
+                      variant="filled"
                       styles={(theme) => ({
                         root: {
                           "&:hover": {
@@ -127,7 +135,7 @@ export default function AppSidebar({ navOpened, role }) {
         </Navbar>
       </MediaQuery>
     );
-  else
+  else if (role)
     return (
       <MediaQuery smallerThan={"md"} styles={{ display: "none" }}>
         <Navbar
@@ -155,6 +163,8 @@ export default function AppSidebar({ navOpened, role }) {
                         py="md"
                         px={"xl"}
                         key={i}
+                        active={router.pathname == l.href}
+                        variant="filled"
                         label={<Text size={"md"}>{l.label}</Text>}
                         className="transition-all"
                         styles={(theme) => ({
@@ -178,6 +188,8 @@ export default function AppSidebar({ navOpened, role }) {
                         <NavLink
                           component={Link}
                           href={l.href}
+                          active={router.pathname == l.href}
+                          variant="filled"
                           styles={(theme) => ({
                             root: {
                               "&:hover": {
@@ -213,6 +225,8 @@ export default function AppSidebar({ navOpened, role }) {
                     <NavLink
                       component={Link}
                       href={l.href}
+                      active={router.pathname == l.href}
+                      variant="filled"
                       styles={(theme) => ({
                         root: {
                           "&:hover": {

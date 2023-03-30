@@ -66,7 +66,7 @@ export default function IdeaCard({ idea }) {
       <Divider />
 
       {idea.comments.map((comment, index) => (
-        <Card withBorder shadow="sm" radius="md" key={index} variant="">
+        <Card withBorder shadow="sm" my="sm" radius="md" key={index} variant="">
           <Anchor>
             <Text className="font-medium">{comment.author}</Text>
           </Anchor>

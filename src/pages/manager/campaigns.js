@@ -4,9 +4,7 @@ import {
   Box,
   Button,
   Group,
-  Input,
   Modal,
-  Popover,
   Select,
   Stack,
   Text,
@@ -14,28 +12,26 @@ import {
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
-import { DateInput, DatePickerInput } from "@mantine/dates";
-import { isNotEmpty, useForm } from "@mantine/form";
-import { closeAllModals, modals } from "@mantine/modals";
+import { DatePickerInput } from "@mantine/dates";
+import { useForm } from "@mantine/form";
+import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
-  IconCalendarOff,
   IconCheck,
   IconEdit,
   IconLock,
   IconQuestionCircle,
-  IconTrash,
   IconX,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { MantineReactTable } from "mantine-react-table";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useSWR, { mutate } from "swr";
 
 // id name 2 closure, aca id
 
-export default function AcademicYear() {
+export default function Campaigns() {
   const supabase = useSupabaseClient();
   const theme = useMantineTheme();
   const {
@@ -278,7 +274,7 @@ export default function AcademicYear() {
   );
 
   return (
-    <AppLayout title={"Campaign Management"}>
+    <>
       <MantineReactTable
         columns={columns}
         data={tableData ?? []}
@@ -330,7 +326,7 @@ export default function AcademicYear() {
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
       />
-    </AppLayout>
+    </>
   );
 }
 
@@ -556,3 +552,15 @@ export const UpdateExistCampaignModal = ({ table, row }) => {
     </form>
   );
 };
+
+Campaigns.getLayout = function getLayout(page) {
+  return <AppLayout>{page}</AppLayout>;
+};
+
+export async function getStaticProps(ctx) {
+  return {
+    props: {
+      title: "Campaign Management",
+    },
+  };
+}

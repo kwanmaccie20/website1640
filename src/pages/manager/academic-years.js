@@ -3,13 +3,11 @@ import {
   ActionIcon,
   Box,
   Button,
-  Flex,
   Group,
   Modal,
   Stack,
   Text,
   TextInput,
-  Title,
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
@@ -18,7 +16,7 @@ import { notifications } from "@mantine/notifications";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconCheck, IconEdit, IconTrash, IconX } from "@tabler/icons-react";
 import { MantineReactTable } from "mantine-react-table";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import useSWR from "swr";
 
 export default function AcademicYear() {
@@ -185,7 +183,7 @@ export default function AcademicYear() {
   );
 
   return (
-    <AppLayout title={"Academic Year Management"}>
+    <>
       <MantineReactTable
         columns={columns}
         data={tableData ?? []}
@@ -237,7 +235,7 @@ export default function AcademicYear() {
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
       />
-    </AppLayout>
+    </>
   );
 }
 
@@ -289,3 +287,15 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
 };
 
 const validateRequired = (value) => !!value.length;
+
+AcademicYear.getLayout = function getLayout(page) {
+  return <AppLayout>{page}</AppLayout>;
+};
+
+export async function getStaticProps(ctx) {
+  return {
+    props: {
+      title: "Academic Year Management",
+    },
+  };
+}

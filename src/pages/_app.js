@@ -1,15 +1,9 @@
-import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import "@/styles/globals.css";
-import AppLayout from "@/layouts/AppLayout";
-import { Inter, Poppins } from "next/font/google";
-import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import { ModalsProvider } from "@mantine/modals";
-import { Notifications } from "@mantine/notifications";
 import Providers from "@/components/Providers";
+import { RouterTransition } from "@/components/RouterTransition";
+import "@/styles/globals.css";
+import { Notifications } from "@mantine/notifications";
+import { Poppins } from "next/font/google";
+import Head from "next/head";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -18,7 +12,7 @@ const poppins = Poppins({
 });
 
 export default function App({ Component, pageProps }) {
-  const router = useRouter();
+  const getLayout = Component.getLayout || ((page) => page);
   return (
     <>
       <Head>
@@ -29,8 +23,9 @@ export default function App({ Component, pageProps }) {
       </Head>
       <Providers pageProps={pageProps}>
         <Notifications position="top-right" />
+        <RouterTransition />
         <div className={`${poppins.variable} font-sans`}>
-          <Component {...pageProps} />
+          {getLayout(<Component {...pageProps} />)}
         </div>
       </Providers>
     </>

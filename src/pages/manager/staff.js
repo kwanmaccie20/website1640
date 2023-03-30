@@ -3,16 +3,13 @@ import {
   ActionIcon,
   Box,
   Button,
-  Flex,
   Group,
   Modal,
-  Overlay,
   Select,
   Stack,
   Text,
   Textarea,
   TextInput,
-  Title,
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
@@ -22,10 +19,10 @@ import { notifications } from "@mantine/notifications";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconCheck, IconEdit, IconTrash, IconX } from "@tabler/icons-react";
 import { MantineReactTable } from "mantine-react-table";
-import { title } from "process";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useSWR, { mutate as mtate } from "swr";
-export default function Department() {
+
+export default function Staff() {
   const supabase = useSupabaseClient();
   const theme = useMantineTheme();
   const {
@@ -193,7 +190,7 @@ export default function Department() {
   );
 
   return (
-    <AppLayout title={"Staff Management"}>
+    <>
       <MantineReactTable
         columns={columns}
         data={tableData ?? []}
@@ -244,7 +241,7 @@ export default function Department() {
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateNewRow}
       />
-    </AppLayout>
+    </>
   );
 }
 
@@ -638,3 +635,15 @@ export const UpdateExistModal = ({ table, row }) => {
     </form>
   );
 };
+
+Staff.getLayout = function getLayout(page) {
+  return <AppLayout>{page}</AppLayout>;
+};
+
+export async function getStaticProps(ctx) {
+  return {
+    props: {
+      title: "Staff Management",
+    },
+  };
+}
