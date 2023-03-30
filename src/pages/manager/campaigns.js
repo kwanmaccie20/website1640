@@ -70,7 +70,7 @@ export default function Campaigns() {
     if (error) {
       mutate([...tableData, data]);
       notifications.show({
-        title: "The campaign has been added successfully",
+        title: "The campaign has been added failed",
         message: "",
         icon: <IconX />,
         color: "red",
