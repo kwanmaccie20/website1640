@@ -34,10 +34,10 @@ export default function AppSidebar({ navOpened, role }) {
                 : theme.colors.gray[2],
             border: "none",
           }}
-          className="transition-[width] ease duration-300 py-3"
+          className="transition-[width] ease duration-300"
         >
           <MediaQuery smallerThan={"lg"} styles={{ display: "none" }}>
-            <ScrollArea>
+            <ScrollArea type="scroll">
               <Stack>
                 {navOpened ? (
                   <Fragment>
@@ -163,7 +163,7 @@ export default function AppSidebar({ navOpened, role }) {
             </ScrollArea>
           </MediaQuery>
           <MediaQuery largerThan={"lg"} styles={{ display: "none" }}>
-            <ScrollArea scrollbarSize={2}>
+            <ScrollArea scrollbarSize={2} type="scroll">
               <Stack>
                 {headerLinks.qaManager.map((l, i) => (
                   <Tooltip.Floating label={l.label} key={i}>
@@ -241,10 +241,10 @@ export default function AppSidebar({ navOpened, role }) {
                 : theme.colors.gray[2],
             border: "none",
           }}
-          className="transition-[width] ease duration-300 py-3"
+          className="transition-[width] ease duration-300"
         >
           <MediaQuery smallerThan={"lg"} styles={{ display: "none" }}>
-            <ScrollArea>
+            <ScrollArea type="scroll">
               <Stack>
                 {navOpened ? (
                   <Fragment>
@@ -370,7 +370,7 @@ export default function AppSidebar({ navOpened, role }) {
             </ScrollArea>
           </MediaQuery>
           <MediaQuery largerThan={"lg"} styles={{ display: "none" }}>
-            <ScrollArea scrollbarSize={2}>
+            <ScrollArea scrollbarSize={2} type="scroll">
               <Stack>
                 {headerLinks.staff.map((l, i) => (
                   <Tooltip.Floating label={l.label} key={i}>
