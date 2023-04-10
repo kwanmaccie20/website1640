@@ -57,18 +57,20 @@ export default function Index() {
   });
   return (
     <>
-      <div className=" relative flex items-center flex-col justify-center justify-items-center min-h-screen h-full  gap-10 overflow-hidden w-[100vw] h-[100vh]">
-        {/* {runZoom && <div className={`${styles.zoom_logo}`}></div>} */}
-        <Text className={`text-3xl font-bold mb-12 ${runZoom && "hidden"}`}>
+      <div className=" relative flex items-center flex-col justify-center justify-items-center min-h-screen gap-10 overflow-hidden w-[100vw] h-[100vh]">
+        <Text
+          data-mantine={true}
+          className={`text-3xl font-bold mb-12 ${runZoom && "hidden"}`}
+        >
           Great to see you!
         </Text>
         <div className={`${runZoom && styles.zoom_logo}`}>
           <Image
             maw={150}
             className={`mb-10 ${runZoom && "hidden"}`}
-            mx="auto"
             radius="50%"
-            alt=""
+            mx="auto"
+            alt="LOGO"
             src={"/NEXT.png"}
           ></Image>
         </div>
@@ -79,8 +81,7 @@ export default function Index() {
           >
             <div className={[styles.group]}>
               <TextInput
-                // label="Username"
-                // labelProps={{ className: [styles.label] }}
+                test_id= "uname"
                 className={[styles.text_input]}
                 variant={"unstyled"}
                 placeholder="Username"
@@ -89,9 +90,8 @@ export default function Index() {
             </div>
             <div className={styles.group}>
               <TextInput
+              test_id= "password"
                 type={"password"}
-                // label="Password"
-                // labelProps={{ className: [styles.label] }}
                 variant={"unstyled"}
                 className={styles.text_input}
                 placeholder="Password"
@@ -99,7 +99,7 @@ export default function Index() {
               ></TextInput>
             </div>
             {err && err.length > 0 && (
-              <div className="p-4 w-full items-center">
+              <div className="p-4 w-full items-center"  >
                 <Alert
                   icon={<IconAlertCircle size="1rem" />}
                   title="Unable to Login!"
@@ -107,7 +107,7 @@ export default function Index() {
                   radius="md"
                 >
                   {err.map((e, index) => (
-                    <Text key={index} size={"sm"}>
+                    <Text key={index} size={"sm"} test_id= "error">
                       {e}
                     </Text>
                   ))}
@@ -116,13 +116,14 @@ export default function Index() {
             )}
             <div className="p-4 w-full items-center">
               <Button
+               test_id= "login"
                 type="submit"
                 className="w-full self-center"
                 loading={processing}
               >
                 Login
               </Button>
-              <Text size={"sm "}>
+              <Text size={"sm "} test_id="reset_pass">
                 Forgot password,{" "}
                 <Anchor component={Link} href={"/auth/reset"}>
                   reset
