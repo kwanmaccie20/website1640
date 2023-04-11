@@ -90,9 +90,18 @@ export default function AppHeader({
         </Group>
         {/* Avatar and notification */}
         <Group>
+        <Menu width={200} shadow="md">
+            <Menu.Target>
           <ActionIcon variant="light" size={"xl"} className="rounded-xl">
             <IconBell color={theme.primaryColor} size={24} />
           </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item>
+              Hello Ne
+            </Menu.Item>
+          </Menu.Dropdown>
+          </Menu>
           <Menu width={200} shadow="md">
             <Menu.Target>
               <UnstyledButton
