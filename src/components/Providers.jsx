@@ -46,6 +46,7 @@ export default function Providers({ children, pageProps }) {
                 "#070708",
               ],
             },
+            loader: "bars",
           }}
         >
           <ModalsProvider>{children}</ModalsProvider>

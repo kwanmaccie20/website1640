@@ -82,8 +82,11 @@ export default function AppLayout({ children }) {
               transitionProperty: "padding",
             },
           }}
+          padding={0}
         >
-          <Container size="xl">{children}</Container>
+          <Container size="xl" px={"sm"} py={"md"}>
+            {children}
+          </Container>
         </AppShell>
 
         {/* drawer */}

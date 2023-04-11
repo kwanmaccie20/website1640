@@ -90,16 +90,10 @@ export default function AppHeader({
         </Group>
         {/* Avatar and notification */}
         <Group>
-          <TextInput
-            type="text"
-            placeholder="Search here"
-            className="hidden xl:block"
-            w={200}
-          />
           <ActionIcon variant="light" size={"xl"} className="rounded-xl">
             <IconBell color={theme.primaryColor} size={24} />
           </ActionIcon>
-          <Menu width={200}>
+          <Menu width={200} shadow="md">
             <Menu.Target>
               <UnstyledButton
                 className="rounded-xl"
@@ -125,6 +119,7 @@ export default function AppHeader({
             <Menu.Dropdown>
               <Menu.Item>Profile</Menu.Item>
               <Menu.Item
+                color="red"
                 onClick={
                   async () => {
                     const { error } = await supabase.auth.signOut();

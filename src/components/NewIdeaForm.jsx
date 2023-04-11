@@ -221,7 +221,7 @@ export default function NewIdeaForm() {
         >
           {(props) => (
             <Button {...props} variant="subtle" fullWidth>
-              Upload files (optional, maximum 3 files)
+              Attach files (optional, maximum 3 files)
             </Button>
           )}
         </FileButton>
