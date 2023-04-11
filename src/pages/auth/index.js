@@ -125,7 +125,7 @@ export default function Index() {
               </Button>
               <Text size={"sm "} test_id="reset_pass">
                 Forgot password,{" "}
-                <Anchor component={Link} href={"/auth/reset"}>
+                <Anchor component={Link} href={"/auth"}>
                   reset
                 </Anchor>
                 ?
