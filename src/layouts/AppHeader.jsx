@@ -1,19 +1,34 @@
+import IdeaDetail from "@/components/IdeaDetail";
+import { useNotification } from "@/hooks/notification";
+import { getTimeElapsed } from "@/utils/getTimeElapsed";
 import {
   ActionIcon,
+  Alert,
   Box,
+  Center,
   createStyles,
   Group,
   Header,
+  Indicator,
+  Loader,
   MediaQuery,
   Menu,
   Paper,
   Text,
   TextInput,
   UnstyledButton,
+  useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { IconBell, IconChevronDown, IconMenu2 } from "@tabler/icons-react";
+import { modals } from "@mantine/modals";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import {
+  IconBell,
+  IconChevronDown,
+  IconMenu2,
+  IconMoonStars,
+  IconSun,
+} from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -43,6 +58,67 @@ export default function AppHeader({
   const supabase = useSupabaseClient();
   const router = useRouter();
   const { classes } = useStyle();
+  const { toggleColorScheme } = useMantineColorScheme();
+  const { data, isLoading, error, mutate } = useNotification(user?.id);
+
+  const handleOpenNotification = async (target, notificationId) => {
+    const { data, count } = await supabase
+      .from("ideas")
+      .select(
+        "*, staff!ideas_author_id_fkey(id, first_name, last_name, email), campaigns!inner(*, academic_year(*)), tags(*), idea_documents(*))",
+        { count: "exact" }
+      )
+      .eq("id", target)
+      .single();
+    if (data) {
+      const { error } = await supabase
+        .from("notifications")
+        .update({ is_new: false })
+        .eq("id", notificationId);
+      if (!error) {
+        mutate();
+      }
+      modals.open({
+        title: <b className="py-3">{data.title}</b>,
+        children: <IdeaDetail idea={data} />,
+        size: "100%",
+        padding: "15px 15px 0 15px",
+      });
+    }
+  };
+
+  const NotificationData = () => {
+    if (isLoading)
+      return (
+        <Center>
+          <Loader />
+        </Center>
+      );
+    if (error)
+      return (
+        <Alert title="Error loading notification">
+          Could not load notification, please try again
+        </Alert>
+      );
+    if (!isLoading && data.length == 0) return "No notification yet";
+    if (data)
+      return data.map((n, i) => (
+        <Menu.Item
+          key={i}
+          onClick={() => handleOpenNotification(n.target, n.id)}
+        >
+          <Indicator position="middle-end" disabled={!n.is_new}>
+            <Box>
+              <Text size={"sm"}>{n.message}</Text>
+              <Text color="dimmed" size={"xs"}>
+                {getTimeElapsed(n.created_at)}
+              </Text>
+            </Box>
+          </Indicator>
+        </Menu.Item>
+      ));
+  };
+
   return (
     <Header height={80} className="border-none">
       <div className="flex justify-between items-center pr-4">
@@ -90,17 +166,31 @@ export default function AppHeader({
         </Group>
         {/* Avatar and notification */}
         <Group>
-        <Menu width={200} shadow="md">
-            <Menu.Target>
-          <ActionIcon variant="light" size={"xl"} className="rounded-xl">
-            <IconBell color={theme.primaryColor} size={24} />
+          <ActionIcon
+            variant="light"
+            size={"xl"}
+            className="rounded-xl"
+            onClick={() => toggleColorScheme()}
+          >
+            {theme.colorScheme == "dark" ? (
+              <IconSun color={theme.primaryColor} />
+            ) : (
+              <IconMoonStars color={theme.primaryColor} />
+            )}
           </ActionIcon>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item>
-              Hello Ne
-            </Menu.Item>
-          </Menu.Dropdown>
+          <Menu width={350} shadow="md" position="bottom-end">
+            <Menu.Target>
+              <Indicator
+                position="top-end"
+                processing
+                disabled={!data?.some((v) => v.is_new == true)}
+              >
+                <ActionIcon variant="light" size={"xl"} className="rounded-xl">
+                  <IconBell color={theme.primaryColor} size={24} />
+                </ActionIcon>
+              </Indicator>
+            </Menu.Target>
+            <Menu.Dropdown>{<NotificationData />}</Menu.Dropdown>
           </Menu>
           <Menu width={200} shadow="md">
             <Menu.Target>

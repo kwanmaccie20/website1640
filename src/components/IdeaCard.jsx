@@ -1,9 +1,11 @@
+import { useIdeaComment } from "@/hooks/comment";
+import { useUserProfile } from "@/hooks/userProfile";
+import { useCountVotes } from "@/hooks/votes";
 import { getTimeElapsed } from "@/utils/getTimeElapsed";
 import {
   ActionIcon,
   Anchor,
   Badge,
-  Box,
   Button,
   Card,
   Center,
@@ -11,87 +13,20 @@ import {
   Group,
   HoverCard,
   Loader,
-  Menu,
   Stack,
   Text,
-  TextInput,
-  ThemeIcon,
-  UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
-import {
-  IconThumbUp,
-  IconThumbUpFilled,
-  IconThumbDown,
-  IconInfoCircle,
-  IconMessageCircle2,
-  IconDots,
-} from "@tabler/icons-react";
-import dayjs from "dayjs";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { IconMessageCircle2, IconThumbUpFilled } from "@tabler/icons-react";
 import Image from "next/image";
-import React from "react";
-import IdeaDetail from "./IdeaDetail";
-import { notifications } from "@mantine/notifications";
-import { useUser } from "@supabase/auth-helpers-react";
 import CommentCard from "./CommentCard";
-import { useIdeaComment } from "@/hooks/comment";
-import { useUserProfile } from "@/hooks/userProfile";
-import UpVoteButton from "./UpvoteButton";
 import DownVoteButton from "./DownVoteButton";
-import { useCountVotes } from "@/hooks/votes";
+import IdeaDetail from "./IdeaDetail";
+import UpVoteButton from "./UpvoteButton";
 
-/*
-  {
-    "id": 10,
-    "title": "fdsfdsfdsfdsf",
-    "description": "fdsfdsfdfds",
-    "author_id": "6a1d39b0-5dac-44e2-aab7-3dac6188d031",
-    "is_anonymous": false,
-    "campaign_id": 4,
-    "created_at": "2023-04-09T16:14:57.355332+00:00",
-    "tag_id": 3,
-    "views": 0,
-    "ranking_score": 0,
-    "comments": [],
-    "campaigns": {
-      "id": 4,
-      "name": "Pool party",
-      "closure_date": "2023-04-30T17:00:00+00:00",
-      "final_closure_date": "2023-05-31T17:00:00+00:00",
-      "created_at": "2023-03-29T10:02:25.622461+00:00",
-      "academic_id": 6,
-      "academic_year": {
-        "id": 6,
-        "created_at": "2023-03-29T05:40:06.500054+00:00",
-        "name": "2022-2023",
-        "description": "",
-        "is_enable": true
-      }
-    },
-    "staff": {
-      "id": "6a1d39b0-5dac-44e2-aab7-3dac6188d031",
-      "first_name": "Kwan",
-      "last_name": "Maccie",
-      "email": "nk9793@gre.com"
-    },
-    "tags": {
-      "id": 3,
-      "name": "Student Life"
-    },
-    "idea_documents": [
-      {
-        "url": "6a1d39b0-5dac-44e2-aab7-3dac6188d031-1681056896046-0"
-      },
-      {
-        "url": "6a1d39b0-5dac-44e2-aab7-3dac6188d031-1681056896047-1"
-      }
-    ]
-  },
-  },
-*/
-
-export default function IdeaCard({ idea }) {
+export default function IdeaCard({ idea, mutateIdea }) {
   const theme = useMantineTheme();
   const user = useUser();
   const { profile } = useUserProfile(user?.id);
@@ -99,6 +34,28 @@ export default function IdeaCard({ idea }) {
   const { count: countVote, isLoading: isCountVoteLoading } = useCountVotes(
     idea.id
   );
+  const supabase = useSupabaseClient();
+  const debounceViewCount = (func, delay) => {
+    let timerId;
+    return (...args) => {
+      clearTimeout(timerId);
+      timerId = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
+
+  const handleViewInc = async () => {
+    const { data, error } = await supabase
+      .from("ideas")
+      .update({ views: idea.views + 1 })
+      .eq("id", idea.id)
+      .select("id");
+    if (data) mutateIdea();
+  };
+
+  const debouncedFunction = debounceViewCount(handleViewInc, 1000 * 60); // 1 min
+
   return (
     <Card
       shadow="sm"
@@ -106,7 +63,8 @@ export default function IdeaCard({ idea }) {
       radius="md"
       withBorder={theme.colorScheme == "dark" ? false : true}
       className="cursor-pointer"
-      onClick={() => {
+      onClick={async () => {
+        debouncedFunction();
         modals.open({
           title: <b className="py-3">{idea.title}</b>,
           children: <IdeaDetail idea={idea} />,
@@ -181,7 +139,8 @@ export default function IdeaCard({ idea }) {
           </Text>
         </Group>
         <Text color="dimmed" size="sm">
-          {count} {count !== 1 ? "comments" : "comment"}
+          {idea.views} {idea.views !== 1 ? "views" : "view"} ・ {count}{" "}
+          {count !== 1 ? "comments" : "comment"}
         </Text>
       </Group>
       <Divider />

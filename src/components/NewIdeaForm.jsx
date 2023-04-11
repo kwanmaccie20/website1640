@@ -26,7 +26,7 @@ import {
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
-export default function NewIdeaForm() {
+export default function NewIdeaForm({ mutate }) {
   const user = useUser();
   const [tag, setTag] = useState([]);
   const [campaign, setCampaign] = useState([]);
@@ -87,6 +87,7 @@ export default function NewIdeaForm() {
       form.setFieldValue("files", form.values.files.slice(-3));
     }
   }, [form.values.files]);
+
   const handleSubmit = form.onSubmit(async (values) => {
     // if (values.files.length > 0) {
     setLoading(true);
@@ -122,9 +123,10 @@ export default function NewIdeaForm() {
         }
         if (iData) {
           if (values.files.length > 0) {
-            const documentArrays = data.map((d) => ({
+            const documentArrays = data.map((d, i) => ({
               idea_id: iData.id,
               url: d.data.path,
+              file_name: values.files[i].name,
             }));
             const { data: rs, error: er } = await supabase
               .from("idea_documents")
@@ -143,6 +145,7 @@ export default function NewIdeaForm() {
                 icon: <IconCheck />,
               });
               modals.closeAll();
+              mutate();
             }
           } else {
             notifications.show({
@@ -150,6 +153,7 @@ export default function NewIdeaForm() {
               icon: <IconCheck />,
             });
             modals.closeAll();
+            mutate();
           }
         }
       },

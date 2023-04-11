@@ -35,7 +35,7 @@ export default function Home() {
   const handleCreateNewIdea = () => {
     modals.open({
       title: "Create New Idea",
-      children: <NewIdeaForm />,
+      children: <NewIdeaForm mutate={mutate} />,
     });
   };
   useEffect(() => {
@@ -112,12 +112,14 @@ export default function Home() {
             An error occurs when loading ideas, please try again later.
           </Alert>
         )}
-        {ideas?.length == 0 ? (
+        {ideas?.length == 0 && !isLoading ? (
           <Text color="dimmed" size={"sm"} align="center">
             No ideas found.
           </Text>
         ) : (
-          ideas.map((idea, index) => <IdeaCard key={index} idea={idea} />)
+          ideas.map((idea, index) => (
+            <IdeaCard key={index} idea={idea} mutateIdea={mutate} />
+          ))
         )}
       </Stack>
       <Group position="right" my="lg">

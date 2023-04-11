@@ -7,13 +7,14 @@ import {
   IconDashboard,
   IconHash,
   IconHierarchy2,
+  IconHierarchy3,
   IconInfoCircle,
   IconUsers,
   IconVocabulary,
 } from "@tabler/icons-react";
 
 /**
- * @type {{staff: [{label:string, href: string, icon: any}], qaManager: [{label:string, href: string, icon: any}]}}
+ * @type {{staff: [{label:string, href: string, icon: any}], qaManager: [{label:string, href: string, icon: any}], qaCoordinator: [{label:string, href: string, icon: any}]}}
  */
 export const headerLinks = {
   staff: [
@@ -24,7 +25,7 @@ export const headerLinks = {
     },
     {
       label: "Archived",
-      href: "Archived",
+      href: "/archived",
       icon: IconArchive,
     },
     {
@@ -78,6 +79,38 @@ export const headerLinks = {
       label: "Academic Years",
       href: "/manager/academic-years",
       icon: IconCalendarTime,
+    },
+    {
+      label: "About",
+      href: "/about",
+      icon: IconInfoCircle,
+    },
+    {
+      label: "Help",
+      href: "/help",
+      icon: IconVocabulary,
+    },
+  ],
+  qaCoordinator: [
+    {
+      label: "Explore",
+      href: "/",
+      icon: IconCompass,
+    },
+    {
+      label: "Archived",
+      href: "/archived",
+      icon: IconArchive,
+    },
+    {
+      label: "Department",
+      href: "/coordinator/department",
+      icon: IconUsers,
+    },
+    {
+      label: "Department's Ideas",
+      href: "/coordinator/idea",
+      icon: IconBulb,
     },
     {
       label: "About",

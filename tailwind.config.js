@@ -16,17 +16,6 @@ module.exports = {
         sans: ["var(--font-poppins)", ...fontFamily.sans],
       },
     },
-    animation: {
-      pop: "ping 1s ease",
-    },
-    keyframes: {
-      ping: {
-        "75%, 100%": {
-          transform: "scale(2)",
-          opacity: 0,
-        },
-      },
-    },
   },
   plugins: [],
   corePlugins: {

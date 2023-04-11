@@ -160,7 +160,7 @@ export default function AppLayout({ children }) {
                       icon={<l.icon strokeWidth={1.5} />}
                     />
                   ))}
-              <NavLink
+              {/* <NavLink
                 py="md"
                 px={"xl"}
                 label={<Text size={"md"}>Display</Text>}
@@ -186,7 +186,7 @@ export default function AppLayout({ children }) {
                     <IconMoonStars strokeWidth={1.5} />
                   )
                 }
-              />
+              /> */}
             </Stack>
           </Drawer>
         </MediaQuery>

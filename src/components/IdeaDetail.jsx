@@ -15,6 +15,7 @@ import {
   Stack,
   Text,
   TextInput,
+  UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
 import { useFocusTrap } from "@mantine/hooks";
@@ -33,6 +34,27 @@ import Link from "next/link";
 import UpVoteButton from "./UpvoteButton";
 import DownVoteButton from "./DownVoteButton";
 import { useCountVotes } from "@/hooks/votes";
+import FileData from "./FileData";
+
+const getFileExt = (url) => {
+  fetch(url, { method: "HEAD" }) // Send a HEAD request to retrieve only the response headers
+    .then((response) => {
+      if (response.ok) {
+        const contentType = response.headers.get("content-type"); // Extract the Content-Type header from the response headers
+        if (contentType) {
+          const fileExtension = contentType.split("/").pop(); // Extract the file extension from the Content-Type header
+          return fileExtension;
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    })
+    .catch((error) => {
+      return null;
+    });
+};
 
 export default function IdeaDetail({ idea }) {
   const theme = useMantineTheme();
@@ -43,6 +65,7 @@ export default function IdeaDetail({ idea }) {
   const { comments, isLoading, mutate, error, count } = useIdeaComment(idea.id);
   const focusTrapRef = useFocusTrap(true);
   const supabase = useSupabaseClient();
+  const [fileList, setFileList] = useState([]);
   const [commentValue, setCommentValue] = useState("");
   const [anon, setAnon] = useState(false);
   const handleComment = async (e) => {
@@ -96,9 +119,15 @@ export default function IdeaDetail({ idea }) {
           </Badge>
         </Group>
 
-        <Text my="md" size="md">
+        <Text size="md" className="font-medium">
           {idea.title}
         </Text>
+        <Text mb="sm">{idea.description}</Text>
+        <div className="flex flex-col mb-1">
+          {idea.idea_documents.map((d, i) => (
+            <FileData key={i} url={d.url} fileName={d.file_name} index={i} />
+          ))}
+        </div>
         <Group position="apart" mb="xs">
           <Group spacing={0}>
             <ActionIcon
@@ -117,7 +146,8 @@ export default function IdeaDetail({ idea }) {
             </Text>
           </Group>
           <Text color="dimmed" size="sm">
-            {count} {count !== 1 ? "comments" : "comment"}
+            {idea.views} {idea.views !== 1 ? "views" : "view"} ・ {count}{" "}
+            {count !== 1 ? "comments" : "comment"}
           </Text>
         </Group>
         <Divider />

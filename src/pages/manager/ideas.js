@@ -39,7 +39,9 @@ export default function Ideas() {
   } = useSWR("ideas", async () => {
     const { data, error } = await supabase
       .from("ideas")
-      .select("*, tags(name), staff(email), campaigns(name)")
+      .select(
+        "*, tags(name), staff!ideas_author_id_fkey(email), campaigns(name)"
+      )
       .order("created_at", { ascending: true });
     if (error) {
       console.log(error);

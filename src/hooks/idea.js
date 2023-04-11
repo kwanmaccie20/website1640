@@ -15,7 +15,7 @@ export const useIdeaFilter = (pageIndex, filter, campaign, searchString) => {
       let query = supabase
         .from("ideas")
         .select(
-          "*, staff!ideas_author_id_fkey(id, first_name, last_name, email), campaigns!inner(*, academic_year(*)), tags(*), idea_documents(url))",
+          "*, staff!ideas_author_id_fkey(id, first_name, last_name, email), campaigns!inner(*, academic_year(*)), tags(*), idea_documents(*))",
           { count: "exact" }
         )
         .gte(

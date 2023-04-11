@@ -415,7 +415,7 @@ function UpdateModal({ mutate, row }) {
             Cancel
           </Button>
           <Button color={theme.fn.primaryColor()} type="submit">
-            Create
+            Update
           </Button>
         </Group>
       </Stack>
