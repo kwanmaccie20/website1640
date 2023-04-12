@@ -149,3 +149,11 @@ export default function Index() {
     </>
   );
 }
+
+export async function getStaticProps(ctx) {
+  return {
+    props: {
+      title: "Login",
+    },
+  };
+}
