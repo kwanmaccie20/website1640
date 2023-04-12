@@ -127,6 +127,7 @@ export default function IdeaCard({ idea, mutateIdea }) {
             className="cursor-default"
             variant="transparent"
             color={theme.fn.primaryColor()}
+            title="Number of votes"
           >
             <IconThumbUpFilled strokeWidth={1.5} />
           </ActionIcon>

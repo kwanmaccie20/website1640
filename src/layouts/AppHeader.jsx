@@ -172,6 +172,7 @@ export default function AppHeader({
               variant="light"
               size={"xl"}
               className="rounded-xl"
+              title="menu"
               onClick={toggleDrawer}
             >
               <IconMenu2 color={theme.primaryColor} size={24} />
@@ -185,6 +186,7 @@ export default function AppHeader({
             variant="light"
             size={"xl"}
             className="rounded-xl"
+            title="Toggle color scheme"
             onClick={() => toggleColorScheme()}
           >
             {theme.colorScheme == "dark" ? (

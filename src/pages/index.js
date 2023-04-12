@@ -77,12 +77,14 @@ export default function Home() {
             placeholder="Latest"
             value={filter}
             size="md"
+            aria-label="Filter ideas"
             onChange={setFilter}
           />
           <Select
             data={campaignData.map((c) => ({ label: c.name, value: c.id }))}
             value={campaignFilter}
             size="md"
+            aria-label="Filter based on campaign"
             onChange={setCampaignFilter}
           />
         </Group>

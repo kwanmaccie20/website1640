@@ -79,7 +79,12 @@ export default function NotificationBox() {
           processing
           disabled={!data?.some((v) => v.is_new == true)}
         >
-          <ActionIcon variant="light" size={"xl"} className="rounded-xl">
+          <ActionIcon
+            variant="light"
+            size={"xl"}
+            className="rounded-xl"
+            title="Notification"
+          >
             <IconBell color={theme.primaryColor} size={24} />
           </ActionIcon>
         </Indicator>

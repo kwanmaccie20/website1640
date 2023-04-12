@@ -103,7 +103,7 @@ export const headerLinks = {
       icon: IconArchive,
     },
     {
-      label: "Department",
+      label: "Member",
       href: "/coordinator/department",
       icon: IconUsers,
     },

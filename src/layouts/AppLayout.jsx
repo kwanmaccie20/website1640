@@ -136,7 +136,35 @@ export default function AppLayout({ children }) {
                       icon={<l.icon strokeWidth={1.5} />}
                     />
                   ))
-                : headerLinks.staff.map((l, i) => (
+                : role == "staff"
+                ? headerLinks.staff.map((l, i) => (
+                    <NavLink
+                      component={Link}
+                      href={l.href}
+                      py="md"
+                      px={"xl"}
+                      key={i}
+                      active={router.pathname == l.href}
+                      variant="filled"
+                      label={<Text size={"md"}>{l.label}</Text>}
+                      className="transition-all"
+                      styles={(theme) => ({
+                        root: {
+                          "&:hover": {
+                            background: theme.fn.gradient({
+                              from: "transparent",
+                              to: theme.fn.rgba(theme.fn.primaryColor(), 0.5),
+                              deg: 45,
+                            }),
+                            borderRight: `7px solid ${theme.fn.primaryColor()}`,
+                            borderRadius: "0 3px 3px 0",
+                          },
+                        },
+                      })}
+                      icon={<l.icon strokeWidth={1.5} />}
+                    />
+                  ))
+                : headerLinks.qaCoordinator.map((l, i) => (
                     <NavLink
                       component={Link}
                       href={l.href}
