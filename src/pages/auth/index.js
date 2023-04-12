@@ -4,6 +4,7 @@ import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconAlertCircle, IconInfoCircle } from "@tabler/icons-react";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
@@ -58,6 +59,9 @@ export default function Index() {
   });
   return (
     <>
+      <Head>
+        <title>Login</title>
+      </Head>
       <div className=" relative flex items-center flex-col justify-center justify-items-center min-h-screen gap-10 overflow-hidden w-[100vw] h-[100vh]">
         <Text
           data-mantine={true}
@@ -85,7 +89,7 @@ export default function Index() {
                 test_id="uname"
                 className={[styles.text_input]}
                 variant={"unstyled"}
-                placeholder="Username"
+                placeholder="Email"
                 {...form.getInputProps("uname")}
               ></TextInput>
             </div>
@@ -148,12 +152,4 @@ export default function Index() {
       </div>
     </>
   );
-}
-
-export async function getStaticProps(ctx) {
-  return {
-    props: {
-      title: "Login",
-    },
-  };
 }
