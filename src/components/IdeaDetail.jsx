@@ -204,7 +204,14 @@ export default function IdeaDetail({ idea }) {
               }
               data-autofocus
               rightSection={
-                <ActionIcon onClick={handleComment}>
+                <ActionIcon
+                  onClick={handleComment}
+                  disabled={
+                    dayjs(idea.campaigns.final_closure_date) -
+                      dayjs(Date.now()) <
+                    0
+                  }
+                >
                   <IconSend
                     strokeWidth={1.5}
                     fill={theme.fn.primaryColor()}

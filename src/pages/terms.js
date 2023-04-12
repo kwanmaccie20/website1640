@@ -82,6 +82,12 @@ export default function Terms() {
           <a href="mailto:duynntgcc19026@fpt.edu.vn">
             duynntgcc19026@fpt.edu.vn
           </a>
+          , or{" "}
+          <a href="mailto:khangnvgcc19118@fpt.edu.vn">
+            khangnvgcc19118@fpt.edu.vn
+          </a>
+          , or{" "}
+          <a href="mailto:huylagcc19056@fpt.edu.vn">huylagcc19056@fpt.edu.vn</a>
           .
         </p>
       </TypographyStylesProvider>

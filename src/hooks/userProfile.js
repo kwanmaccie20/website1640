@@ -8,7 +8,7 @@ export const useUserProfile = (userId) => {
     async () => {
       const { data } = await supabase
         .from("staff")
-        .select("*, roles(id, title)")
+        .select("*, roles(id, title), departments!staff_department_id_fkey(*)")
         .eq("id", userId)
         .single()
         .throwOnError();

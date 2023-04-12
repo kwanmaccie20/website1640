@@ -53,6 +53,10 @@ export default function AppLayout({ children }) {
     getRole();
   }, [router, supabase]);
 
+  useEffect(() => {
+    closeDrawer();
+  }, [router.pathname]);
+
   if (user)
     return (
       <>

@@ -11,6 +11,11 @@ import {
   TextInput,
   Tooltip,
   useMantineTheme,
+  Anchor,
+  Table,
+  Badge,
+  ScrollArea,
+  Avatar,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
@@ -138,6 +143,21 @@ export default function Department() {
       {
         accessorKey: "name",
         header: "Department Name",
+        Cell: ({ cell }) => {
+          return (
+            <Anchor
+              onClick={() =>
+                modals.open({
+                  title: "Department: " + cell.getValue("name"),
+                  children: <StaffOfDepartment dId={cell.row.original.id} />,
+                  size: "100%",
+                })
+              }
+            >
+              {cell.getValue("name")}
+            </Anchor>
+          );
+        },
       },
       {
         accessorKey: "staff.email",
@@ -592,4 +612,77 @@ export async function getStaticProps(ctx) {
       title: "Department Management",
     },
   };
+}
+
+function StaffOfDepartment({ dId }) {
+  const supabase = useSupabaseClient();
+  const [listStaff, setListStaff] = useState([]);
+  const getData = async () => {
+    const { data, error } = await supabase
+      .from("staff")
+      .select("*, departments!staff_department_id_fkey!inner(*)")
+      .eq("departments.id", dId);
+    //                     src={`https://i.pravatar.cc/150?u=${user.email}`}
+    try {
+      console.log("Data", data);
+      const matchFormat = data.map((val) => ({
+        avatar: `https://i.pravatar.cc/150?u=${val.email}`,
+        name: val.first_name + " " + val.last_name,
+        job: val.gender,
+        email: val.email,
+        phone: val.phone,
+      }));
+      setListStaff(matchFormat);
+    } catch {
+      notifications.show({
+        title: "Error to get data",
+      });
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+  const rows = listStaff.map((item) => (
+    <tr key={item.name}>
+      <td>
+        <Group spacing="sm">
+          <Avatar size={30} src={item.avatar} radius={30} />
+          <Text fz="sm" fw={500}>
+            {item.name}
+          </Text>
+        </Group>
+      </td>
+
+      <td>
+        <Badge variant={"light"}>{item.job}</Badge>
+      </td>
+      <td>
+        <Anchor size="sm" href={`mailto:${item.email}`}>
+          {item.email}
+        </Anchor>
+      </td>
+      <td>
+        <Text fz="sm" c="dimmed">
+          {item.phone}
+        </Text>
+      </td>
+    </tr>
+  ));
+  return (
+    <div>
+      <ScrollArea>
+        <Table sx={{ minWidth: 800 }} verticalSpacing="sm">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Gender</th>
+              <th>Email</th>
+              <th>Phone</th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </Table>
+      </ScrollArea>
+    </div>
+  );
 }

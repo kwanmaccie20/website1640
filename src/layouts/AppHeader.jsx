@@ -1,4 +1,5 @@
 import NotificationBox from "@/components/NotificationBox";
+import UserInfo from "@/components/UserInfo";
 import { useNotification } from "@/hooks/notification";
 import {
   ActionIcon,
@@ -14,6 +15,7 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import {
   IconChevronDown,
@@ -216,7 +218,16 @@ export default function AppHeader({
               </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item>Profile</Menu.Item>
+              <Menu.Item
+                onClick={() =>
+                  modals.open({
+                    title: <b>My profile</b>,
+                    children: <UserInfo />,
+                  })
+                }
+              >
+                Profile
+              </Menu.Item>
               <Menu.Item
                 color="red"
                 onClick={

@@ -1,8 +1,9 @@
 import styles from "@/styles/styles.module.css";
 import { Alert, Anchor, Button, Image, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { IconAlertCircle, IconInfoCircle } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
@@ -81,7 +82,7 @@ export default function Index() {
           >
             <div className={[styles.group]}>
               <TextInput
-                test_id= "uname"
+                test_id="uname"
                 className={[styles.text_input]}
                 variant={"unstyled"}
                 placeholder="Username"
@@ -90,7 +91,7 @@ export default function Index() {
             </div>
             <div className={styles.group}>
               <TextInput
-              test_id= "password"
+                test_id="password"
                 type={"password"}
                 variant={"unstyled"}
                 className={styles.text_input}
@@ -99,7 +100,7 @@ export default function Index() {
               ></TextInput>
             </div>
             {err && err.length > 0 && (
-              <div className="p-4 w-full items-center"  >
+              <div className="p-4 w-full items-center">
                 <Alert
                   icon={<IconAlertCircle size="1rem" />}
                   title="Unable to Login!"
@@ -107,7 +108,7 @@ export default function Index() {
                   radius="md"
                 >
                   {err.map((e, index) => (
-                    <Text key={index} size={"sm"} test_id= "error">
+                    <Text key={index} size={"sm"} test_id="error">
                       {e}
                     </Text>
                   ))}
@@ -116,7 +117,7 @@ export default function Index() {
             )}
             <div className="p-4 w-full items-center">
               <Button
-               test_id= "login"
+                test_id="login"
                 type="submit"
                 className="w-full self-center"
                 loading={processing}
@@ -125,7 +126,18 @@ export default function Index() {
               </Button>
               <Text size={"sm "} test_id="reset_pass">
                 Forgot password,{" "}
-                <Anchor component={Link} href={"/auth"}>
+                <Anchor
+                  onClick={() =>
+                    notifications.show({
+                      color: "blue",
+                      icon: <IconInfoCircle size={"sx"} />,
+                      autoClose: 5000,
+                      title: "Action required!",
+                      message:
+                        "For security, Please contact your administrator to reset your password.",
+                    })
+                  }
+                >
                   reset
                 </Anchor>
                 ?

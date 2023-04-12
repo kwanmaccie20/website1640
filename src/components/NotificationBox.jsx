@@ -109,9 +109,11 @@ export default function NotificationBox() {
                 key={i}
                 onClick={() => handleOpenNotification(n.target, n.id)}
               >
-                <Indicator position="middle-end" disabled={!n.is_new}>
-                  <Box>
-                    <Text size={"sm"}>{n.message}</Text>
+                <Indicator position="middle-start" disabled={!n.is_new}>
+                  <Box pl="sm">
+                    <Text size={"sm"} lineClamp={2}>
+                      {n.message}
+                    </Text>
                     <Text color="dimmed" size={"xs"}>
                       {getTimeElapsed(n.created_at)}
                     </Text>

@@ -2,6 +2,7 @@ import { Button, Text, useMantineTheme } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { IconThumbDown, IconThumbUp, IconX } from "@tabler/icons-react";
+import dayjs from "dayjs";
 import React from "react";
 import useSWR from "swr";
 import { mutate as gMutate } from "swr";
@@ -68,6 +69,9 @@ export default function DownVoteButton({ idea }) {
   return (
     <Button
       variant="default"
+      disabled={
+        dayjs(idea.campaigns.final_closure_date) - dayjs(Date.now()) < 0
+      }
       leftIcon={
         <IconThumbDown
           strokeWidth={1.5}
