@@ -1,3 +1,4 @@
+import { transporter } from "@/libs/nodemailer";
 import { supabaseAdmin } from "@/libs/supabase";
 import { NextRequest, NextResponse } from "next/server";
 // import fs from "fs";
@@ -66,10 +67,22 @@ export default async function handler(req, res) {
           .update({ coordinator_id: data.user.id })
           .eq("id", body.department_id);
     }
-    res.status(200).send({
-      message: "New staff has been added into the system.",
-      data: body,
-    });
+    try {
+      let info = await transporter.sendMail({
+        from: process.env.GOOGLE_ACCOUNT, // sender address
+        to: body.email, // list of receivers
+        subject: "Next Uni - Your account has been created", // Subject line
+        text: `Your account has been created with email "${body.email}" and password "${password}" `, // plain text body
+        html: `<b>Your account has been created</b><br/><b>Email: </b><span>${body.email}</span><br/><b>Password: </b><span>${password}</span>`, // html body
+      });
+      res.status(200).send({
+        message: "New staff has been added into the system.",
+        data: body,
+      });
+    } catch (e) {
+      console.log(e);
+      res.status(500).send({ message: 500 });
+    }
   }
 }
 

@@ -29,6 +29,7 @@
     "dayjs": "^1.11.7",
     "mantine-react-table": "^1.0.0-beta.0",
     "next": "13.2.4",
+    "nodemailer": "^6.9.1",
     "react": "18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",

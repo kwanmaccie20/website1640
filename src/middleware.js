@@ -14,7 +14,10 @@ export async function middleware(req) {
     if (session) {
       return NextResponse.redirect(new URL("/", req.url));
     }
-  } else if (req.nextUrl.pathname.startsWith("/manager")) {
+  } else if (
+    req.nextUrl.pathname.startsWith("/manager") ||
+    req.nextUrl.pathname.startsWith("/api")
+  ) {
     if (session) {
       const {
         data: { role_id },

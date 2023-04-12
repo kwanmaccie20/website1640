@@ -46,6 +46,13 @@ export default function Staff() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const handleCreateNewRow = async (values) => {
+    notifications.show({
+      title: "Processing",
+      message: "New staff is being added",
+      loading: true,
+      id: "add-staff",
+      autoClose: 50000,
+    });
     const res = await fetch("/api/create_user", {
       method: "POST",
       header: { "Content-Type": "application/json" },
@@ -54,16 +61,22 @@ export default function Staff() {
     const getRes = await res.json();
     if (res.status !== 500) {
       mutate([...tableData, getRes.data]);
-      notifications.show({
+      notifications.update({
         title: "Staff added successfully",
         icon: <IconCheck />,
+        id: "add-staff",
+        loading: false,
+        autoClose: 2000,
       });
     } else {
-      notifications.show({
+      notifications.update({
         title: "An error occurs",
         message: `Could not add staff information`,
         icon: <IconX />,
         color: "red",
+        id: "add-staff",
+        loading: false,
+        autoClose: 2000,
       });
     }
   };
