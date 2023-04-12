@@ -1,5 +1,4 @@
 import AppLayout from "@/layouts/AppLayout";
-import { csvExporter } from "@/libs/csvExporter";
 import {
   ActionIcon,
   Box,
@@ -21,6 +20,7 @@ import {
   IconTrash,
   IconX,
 } from "@tabler/icons-react";
+import dayjs from "dayjs";
 import { MantineReactTable } from "mantine-react-table";
 import { useEffect, useMemo } from "react";
 import useSWR from "swr";
@@ -144,9 +144,7 @@ export default function Ideas() {
     []
   );
 
-  const handleExportData = () => {
-    csvExporter(columns).generateCsv(tableData);
-  };
+  const handleExportData = async () => {};
 
   return (
     <>
@@ -195,14 +193,15 @@ export default function Ideas() {
               flexWrap: "wrap",
             }}
           >
-            <Button
+            <DownloadButton />
+            {/* <Button
               color={theme.fn.primaryColor()}
               onClick={handleExportData}
               leftIcon={<IconDownload />}
               variant="filled"
             >
               Export all data
-            </Button>
+            </Button> */}
           </Box>
         )}
       />
@@ -220,4 +219,46 @@ export async function getStaticProps(ctx) {
       title: "Idea Management",
     },
   };
+}
+
+export function DownloadButton() {
+  const theme = useMantineTheme();
+  const supabase = useSupabaseClient();
+  const handleDownload = async () => {
+    const { data, error } = await supabase
+      .from("ideas")
+      .select(
+        "id, title, description, is_anonymous, created_at, views, ranking_score, tags(name), staff!ideas_author_id_fkey(email), campaigns(name)"
+      )
+      .order("created_at", { ascending: true })
+      .csv();
+    if (error) {
+      notifications.show({
+        title: "An error occurs",
+        message: `Could not export ideas`,
+        icon: <IconX />,
+        color: "red",
+      });
+    }
+    if (data) {
+      const blob = new Blob([data], { type: "text/csv" });
+      const downloadUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = downloadUrl;
+      anchor.download = `export_${dayjs(Date.now()).format("YYYY-MM-DD")}.csv`; // Replace with your desired filename
+      anchor.click();
+      URL.revokeObjectURL(downloadUrl);
+    }
+  };
+
+  return (
+    <Button
+      color={theme.fn.primaryColor()}
+      leftIcon={<IconDownload />}
+      variant="filled"
+      onClick={handleDownload}
+    >
+      Export data
+    </Button>
+  );
 }

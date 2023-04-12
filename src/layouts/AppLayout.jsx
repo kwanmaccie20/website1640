@@ -69,7 +69,6 @@ export default function AppLayout({ children }) {
               toggleNav={toggleNav}
               navOpened={navOpened}
               title={children.props.title}
-              user={user}
               name={name}
             />
           }

@@ -69,7 +69,6 @@ export default function Tags() {
       })
       .select("*");
     if (error) {
-      mutate([...tableData, data]);
       notifications.show({
         title: "The tag has been added failed.",
         message: "",
@@ -268,6 +267,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
   const handleSubmit = form.onSubmit((values) => {
     //put your validation logic here
     onSubmit(values);
+    form.reset();
     onClose();
   });
 

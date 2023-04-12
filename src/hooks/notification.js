@@ -9,7 +9,8 @@ export const useNotification = (userId) => {
       const { data, error } = await supabase
         .from("notifications")
         .select("*")
-        .eq("staff_id", userId);
+        .eq("staff_id", userId)
+        .order("created_at", { ascending: false });
       if (error) {
         console.log(error);
         throw new Error(error.message);

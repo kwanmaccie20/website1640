@@ -97,7 +97,11 @@ export default function IdeaDetail({ idea }) {
         <Group position="apart" align="flex-start" spacing={0}>
           <Group spacing={"sm"}>
             <Image
-              src={`https://i.pravatar.cc/150?u=${idea.staff.email}`}
+              src={
+                idea.is_anonymous
+                  ? "/user.avif"
+                  : `https://i.pravatar.cc/150?u=${idea.staff.email}`
+              }
               alt="avatar"
               width={30}
               height={30}
@@ -106,7 +110,9 @@ export default function IdeaDetail({ idea }) {
             <Stack spacing={0}>
               <Anchor>
                 <Text className="font-medium">
-                  {idea.staff.first_name} {idea.staff.last_name}
+                  {idea.is_anonymous
+                    ? "Anonymous"
+                    : `${idea.staff.first_name} ${idea.staff.last_name}`}
                 </Text>
               </Anchor>
               <Text size={"xs"} color="dimmed">

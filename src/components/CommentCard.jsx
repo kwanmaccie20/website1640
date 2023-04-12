@@ -7,6 +7,7 @@ import {
   Group,
   HoverCard,
   Menu,
+  Spoiler,
   Text,
   useMantineTheme,
 } from "@mantine/core";
@@ -110,7 +111,16 @@ export default function CommentCard({ comment, mutate }) {
             {getTimeElapsed(comment.created_at)}
           </Text>
         </Group>
-        <Text size={"sm"}>{comment.comment}</Text>
+        <Spoiler
+          maxHeight={100}
+          onClick={(e) => e.stopPropagation()}
+          showLabel="See more"
+          hideLabel="Collapse"
+        >
+          <Text size={"sm"} className="text-ellipsis overflow-hidden">
+            {comment.comment}
+          </Text>
+        </Spoiler>
       </Card>
       {comment.staff.id === user?.id && (
         <Menu width={200}>

@@ -1,29 +1,21 @@
-import IdeaDetail from "@/components/IdeaDetail";
+import NotificationBox from "@/components/NotificationBox";
 import { useNotification } from "@/hooks/notification";
-import { getTimeElapsed } from "@/utils/getTimeElapsed";
 import {
   ActionIcon,
-  Alert,
   Box,
-  Center,
   createStyles,
   Group,
   Header,
-  Indicator,
-  Loader,
   MediaQuery,
   Menu,
   Paper,
   Text,
-  TextInput,
   UnstyledButton,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import { modals } from "@mantine/modals";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import {
-  IconBell,
   IconChevronDown,
   IconMenu2,
   IconMoonStars,
@@ -51,73 +43,94 @@ export default function AppHeader({
   toggleNav,
   navOpened,
   title,
-  user,
   name,
 }) {
   const theme = useMantineTheme();
   const supabase = useSupabaseClient();
   const router = useRouter();
   const { classes } = useStyle();
+  const user = useUser();
   const { toggleColorScheme } = useMantineColorScheme();
-  const { data, isLoading, error, mutate } = useNotification(user?.id);
+  const { data } = useNotification(user?.id);
 
-  const handleOpenNotification = async (target, notificationId) => {
-    const { data, count } = await supabase
-      .from("ideas")
-      .select(
-        "*, staff!ideas_author_id_fkey(id, first_name, last_name, email), campaigns!inner(*, academic_year(*)), tags(*), idea_documents(*))",
-        { count: "exact" }
-      )
-      .eq("id", target)
-      .single();
-    if (data) {
-      const { error } = await supabase
-        .from("notifications")
-        .update({ is_new: false })
-        .eq("id", notificationId);
-      if (!error) {
-        mutate();
-      }
-      modals.open({
-        title: <b className="py-3">{data.title}</b>,
-        children: <IdeaDetail idea={data} />,
-        size: "100%",
-        padding: "15px 15px 0 15px",
-      });
-    }
-  };
+  // const handleOpenNotification = async (target, notificationId) => {
+  //   const { data, count } = await supabase
+  //     .from("ideas")
+  //     .select(
+  //       "*, staff!ideas_author_id_fkey(id, first_name, last_name, email), campaigns!inner(*, academic_year(*)), tags(*), idea_documents(*))",
+  //       { count: "exact" }
+  //     )
+  //     .eq("id", target)
+  //     .single();
+  //   if (data) {
+  //     const { error } = await supabase
+  //       .from("notifications")
+  //       .update({ is_new: false })
+  //       .eq("id", notificationId);
+  //     if (!error) {
+  //       mutate();
+  //     }
+  //     modals.open({
+  //       title: <b className="py-3">{data.title}</b>,
+  //       children: <IdeaDetail idea={data} />,
+  //       size: "100%",
+  //       padding: "15px 15px 0 15px",
+  //     });
+  //   }
+  // };
 
-  const NotificationData = () => {
-    if (isLoading)
-      return (
-        <Center>
-          <Loader />
-        </Center>
-      );
-    if (error)
-      return (
-        <Alert title="Error loading notification">
-          Could not load notification, please try again
-        </Alert>
-      );
-    if (!isLoading && data.length == 0) return "No notification yet";
-    if (data)
-      return data.map((n, i) => (
-        <Menu.Item
-          key={i}
-          onClick={() => handleOpenNotification(n.target, n.id)}
-        >
-          <Indicator position="middle-end" disabled={!n.is_new}>
-            <Box>
-              <Text size={"sm"}>{n.message}</Text>
-              <Text color="dimmed" size={"xs"}>
-                {getTimeElapsed(n.created_at)}
-              </Text>
-            </Box>
-          </Indicator>
-        </Menu.Item>
-      ));
-  };
+  // const NotificationData = () => {
+  //   if (isLoading)
+  //     return (
+  //       <Center>
+  //         <Loader />
+  //       </Center>
+  //     );
+  //   if (error)
+  //     return (
+  //       <Alert title="Error loading notification">
+  //         Could not load notification, please try again
+  //       </Alert>
+  //     );
+  //   if (!isLoading && data.length == 0) return "No notification yet";
+  //   if (data)
+  //     return data.map((n, i) => (
+  //       <Menu.Item
+  //         key={i}
+  //         onClick={() => handleOpenNotification(n.target, n.id)}
+  //       >
+  //         <Indicator position="middle-end" disabled={!n.is_new}>
+  //           <Box>
+  //             <Text size={"sm"}>{n.message}</Text>
+  //             <Text color="dimmed" size={"xs"}>
+  //               {getTimeElapsed(n.created_at)}
+  //             </Text>
+  //           </Box>
+  //         </Indicator>
+  //       </Menu.Item>
+  //     ));
+  // };
+
+  // useEffect(() => {
+  //   if (user?.id) {
+  //     const newNotification = supabase
+  //       .channel(`notification-${user?.id}`)
+  //       .on(
+  //         "postgres_changes",
+  //         {
+  //           event: "INSERT",
+  //           schema: "public",
+  //           table: "notifications",
+  //           filter: `staff_id=eq.${user?.id}`,
+  //         },
+  //         (payload) => {
+  //           mutate([...data, payload]);
+  //         }
+  //       )
+  //       .subscribe();
+  //     return () => newNotification.unsubscribe();
+  //   }
+  // }, [user?.id]);
 
   return (
     <Header height={80} className="border-none">
@@ -178,20 +191,7 @@ export default function AppHeader({
               <IconMoonStars color={theme.primaryColor} />
             )}
           </ActionIcon>
-          <Menu width={350} shadow="md" position="bottom-end">
-            <Menu.Target>
-              <Indicator
-                position="top-end"
-                processing
-                disabled={!data?.some((v) => v.is_new == true)}
-              >
-                <ActionIcon variant="light" size={"xl"} className="rounded-xl">
-                  <IconBell color={theme.primaryColor} size={24} />
-                </ActionIcon>
-              </Indicator>
-            </Menu.Target>
-            <Menu.Dropdown>{<NotificationData />}</Menu.Dropdown>
-          </Menu>
+          <NotificationBox />
           <Menu width={200} shadow="md">
             <Menu.Target>
               <UnstyledButton

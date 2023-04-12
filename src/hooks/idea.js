@@ -44,7 +44,7 @@ export const useIdeaFilter = (pageIndex, filter, campaign, searchString) => {
 
       const { data, error, count } = await query.range(
         pageIndex * 5,
-        pageIndex * 5 + 5
+        pageIndex * 5 + 4
       );
       if (error) {
         console.log(error);

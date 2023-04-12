@@ -224,11 +224,11 @@ export default function Dashboard() {
 
       <Stack>
         <div className="">
-          <h2 className="text-2xl font-bold mb-4">Bar Chart</h2>
+          {/* <h2 className="text-2xl font-bold mb-4">Top popular ideas</h2> */}
           <Chart data={topIdea} />
         </div>
         <div className="">
-          <h2 className="text-2xl font-bold mb-4">Bar Chart</h2>
+          {/* <h2 className="text-2xl font-bold mb-4">Top view ideas</h2> */}
           <ChartOfView data={topView} />
         </div>
 
@@ -354,7 +354,7 @@ const Chart = ({ data }) => {
       },
       title: {
         display: true,
-        text: "Chart.js Bar Chart",
+        text: "Top Popular Ideas",
       },
     },
   };
@@ -386,7 +386,7 @@ const ChartOfView = ({ data }) => {
     labels: labels,
     datasets: [
       {
-        label: "Ranking Score",
+        label: "Views",
         data: data.map((item) => item.views),
         backgroundColor: "rgba(75,192,192,1)",
       },
@@ -403,7 +403,7 @@ const ChartOfView = ({ data }) => {
       },
       title: {
         display: true,
-        text: "Chart.js Bar Chart",
+        text: "Top View Ideas",
       },
     },
   };
