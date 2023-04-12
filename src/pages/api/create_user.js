@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "@/libs/supabase";
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
+// import fs from "fs";
 /**
  *
  * @param {NextRequest} req
@@ -33,10 +33,10 @@ export default async function handler(req, res) {
     res.status(500).send({ message: "500" });
   }
   if (data) {
-    fs.appendFileSync(
-      "public/user.txt",
-      `\nemail:${body.email} \tPassword:${password}`
-    );
+    // fs.appendFileSync(
+    //   "public/user.txt",
+    //   `\nemail:${body.email} \tPassword:${password}`
+    // );
     //Update coordinator of the department
     const { data: roleData, error: roleError } = await supabaseAdmin
       .from("roles")

@@ -1,3 +1,4 @@
+import IdeaDetail from "@/components/IdeaDetail";
 import AppLayout from "@/layouts/AppLayout";
 import {
   ActionIcon,
@@ -49,9 +50,6 @@ export default function Ideas() {
     }
     return data;
   });
-  useEffect(() => {
-    console.log(tableData);
-  }, [tableData]);
 
   const handleDeleteRow = async (row) => {
     modals.openConfirmModal({
@@ -144,7 +142,24 @@ export default function Ideas() {
     []
   );
 
-  const handleExportData = async () => {};
+  const handleOpenIdea = async (row) => {
+    const { data, count } = await supabase
+      .from("ideas")
+      .select(
+        "*, staff!ideas_author_id_fkey(id, first_name, last_name, email), campaigns!inner(*, academic_year(*)), tags(*), idea_documents(*))",
+        { count: "exact" }
+      )
+      .eq("id", row.original.id)
+      .single();
+    if (data) {
+      modals.open({
+        title: <b className="py-3">{data.title}</b>,
+        children: <IdeaDetail idea={data} />,
+        size: "100%",
+        padding: "15px 15px 0 15px",
+      });
+    }
+  };
 
   return (
     <>
@@ -171,9 +186,7 @@ export default function Ideas() {
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: "flex", gap: "16px" }}>
             <Tooltip withArrow position="left" label="View">
-              <ActionIcon
-                onClick={() => alert(JSON.stringify(row.original, null, 2))}
-              >
+              <ActionIcon onClick={() => handleOpenIdea(row)}>
                 <IconExternalLink />
               </ActionIcon>
             </Tooltip>

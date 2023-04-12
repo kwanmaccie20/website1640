@@ -29,5 +29,20 @@ export async function middleware(req) {
         });
       }
     }
+  } else if (req.nextUrl.pathname.startsWith("/coordinator")) {
+    if (session) {
+      const {
+        data: { role_id },
+      } = await supabase
+        .from("staff")
+        .select("role_id")
+        .eq("id", session.user.id)
+        .single();
+      if (role_id !== 3) {
+        return new Response("", {
+          status: 403,
+        });
+      }
+    }
   }
 }

@@ -51,9 +51,6 @@ export default function Campaigns() {
     }
     return data;
   });
-  useEffect(() => {
-    console.log(tableData);
-  }, [tableData]);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -355,11 +352,11 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
       if (data) setAcademic(data);
     })();
   }, [supabase]);
-  useEffect(() => console.log(form.values), [form.values]);
 
   const handleSubmit = form.onSubmit((values) => {
     //put your validation logic here
     onSubmit(values);
+    form.reset();
     onClose();
   });
 
@@ -460,7 +457,6 @@ export const UpdateExistCampaignModal = ({ table, row }) => {
       if (data) setAcademic(data);
     })();
   }, [supabase]);
-  useEffect(() => console.log(form.values), [form.values]);
 
   const handleSubmit = form.onSubmit(async (values) => {
     const { data, error } = await supabase

@@ -3,9 +3,8 @@ import { Alert, Center, Group, Loader, Stack, Text } from "@mantine/core";
 import { useUser } from "@supabase/auth-helpers-react";
 import React from "react";
 
-export default function UserInfo() {
-  const user = useUser();
-  const { profile, isLoading, error } = useUserProfile(user?.id);
+export default function UserInfo({ userId }) {
+  const { profile, isLoading, error } = useUserProfile(userId);
   if (error) {
     console.log(error);
     return (
@@ -21,7 +20,6 @@ export default function UserInfo() {
       </Center>
     );
   if (profile) {
-    console.log(profile);
     return (
       <Stack px="md">
         <Group position="apart">

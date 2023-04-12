@@ -52,7 +52,7 @@ export default function Staff() {
       body: JSON.stringify(values),
     });
     const getRes = await res.json();
-    if (getRes?.data) {
+    if (res.status !== 500) {
       mutate([...tableData, getRes.data]);
       notifications.show({
         title: "Staff added successfully",
@@ -75,6 +75,7 @@ export default function Staff() {
       modalId: "20092001",
     });
   };
+
   const handleDeleteRow = (row) => {
     if (row.original.role_id !== 3) {
       modals.openConfirmModal({
@@ -86,6 +87,7 @@ export default function Staff() {
           </Text>
         ),
         labels: { confirm: "Delete", cancel: "Cancel" },
+        confirmProps: { color: "red" },
         onCancel: () => modals.closeAll(),
         onConfirm: async () => {
           const res = await fetch("/api/delusr", {
@@ -94,8 +96,7 @@ export default function Staff() {
             body: JSON.stringify({ id: row.original.id }),
           });
           const getRes = await res.json();
-          console.log("----", getRes);
-          if (getRes?.data) {
+          if (res.status !== 500) {
             notifications.show({
               title: "Staff deleted successfully",
               icon: <IconCheck />,
@@ -460,17 +461,17 @@ export const UpdateExistModal = ({ table, row }) => {
   //     setRoleList(roleValue);
   //   }
   // };
-  useEffect(() => {
-    // getDepartment();
-    // getRole();
-  }, []);
+  // useEffect(() => {
+  // getDepartment();
+  // getRole();
+  // }, []);
 
   const newStaffForm = useForm({
     initialValues: {
       email: row.original.email,
       first_name: row.original.first_name,
       last_name: row.original.last_name,
-      // department_id: row.original.department_id,
+      department_id: row.original.department_id,
       role_id: row.original.role_id,
       phone: row.original.phone,
       gender: row.original.gender,
@@ -490,6 +491,7 @@ export const UpdateExistModal = ({ table, row }) => {
   // }, [newStaffForm, newStaffForm.values]);
 
   const handleSubmit = newStaffForm.onSubmit(async (val) => {
+    // console.log(val);
     if (val.email != row.original.email) val.email = row.original.email;
     const { data, error } = await supabase
       .from("staff")
@@ -497,6 +499,7 @@ export const UpdateExistModal = ({ table, row }) => {
       .eq("id", row.original.id)
       .select("id");
     if (error) {
+      console.log(error);
       notifications.show({
         title: "An error occurs",
         message: `Could not update staff information`,
@@ -505,6 +508,7 @@ export const UpdateExistModal = ({ table, row }) => {
       });
     }
     if (data) {
+      // console.log(data);
       //Update coordinator of the department
       // const { data: roleData, error: roleError } = await supabase
       //   .from("roles")

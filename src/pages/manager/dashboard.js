@@ -30,6 +30,9 @@ import {
   IconCoin,
   IconArrowUpRight,
   IconArrowDownRight,
+  IconBulb,
+  IconUsers,
+  IconHierarchy2,
 } from "@tabler/icons-react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect } from "react";
@@ -65,9 +68,9 @@ const useStyles = createStyles((theme) => ({
 
 const icons = {
   user: IconUserPlus,
-  discount: IconDiscount2,
-  receipt: IconReceipt2,
-  coin: IconCoin,
+  discount: IconHierarchy2,
+  receipt: IconBulb,
+  coin: IconUsers,
 };
 
 export default function Dashboard() {
@@ -85,7 +88,6 @@ export default function Dashboard() {
       .order("views", { ascending: false })
       .limit(10);
     try {
-      console.log("VIEW", data);
       setTopView(data);
     } catch {
       console.log(error);
@@ -98,7 +100,6 @@ export default function Dashboard() {
       .order("ranking_score", { ascending: false })
       .limit(10);
     try {
-      console.log(data);
       setTopIdea(data);
     } catch {
       console.log(error);
@@ -129,7 +130,6 @@ export default function Dashboard() {
       .from("ideas")
       .select("id", { count: "exact" });
     try {
-      console.log(count);
       setIdeaCount(count);
     } catch {
       console.log("ERROR", error);
@@ -141,7 +141,6 @@ export default function Dashboard() {
       .select("*");
     try {
       setTags(data.map((val) => ({ value: val.name, count: val.idea_count })));
-      console.log(data);
     } catch (err) {
       console.log(error);
     }
@@ -179,12 +178,12 @@ export default function Dashboard() {
       value: departmentCount,
       diff: "in company",
     },
-    {
-      title: "New customers",
-      icon: "user",
-      value: "188",
-      diff: -30,
-    },
+    // {
+    //   title: "New customers",
+    //   icon: "user",
+    //   value: "188",
+    //   diff: -30,
+    // },
   ];
   const { classes } = useStyles();
   const stats = data.map((stat) => {
@@ -213,7 +212,7 @@ export default function Dashboard() {
   return (
     <div className={classes.root}>
       <SimpleGrid
-        cols={4}
+        cols={3}
         breakpoints={[
           { maxWidth: "md", cols: 2 },
           { maxWidth: "xs", cols: 1 },
@@ -224,16 +223,16 @@ export default function Dashboard() {
 
       <Stack>
         <div className="">
-          {/* <h2 className="text-2xl font-bold mb-4">Top popular ideas</h2> */}
+          <h2 className="text-2xl font-bold my-4">Top popular ideas</h2>
           <Chart data={topIdea} />
         </div>
         <div className="">
-          {/* <h2 className="text-2xl font-bold mb-4">Top view ideas</h2> */}
+          <h2 className="text-2xl font-bold my-4">Top view ideas</h2>
           <ChartOfView data={topView} />
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold mb-4">Popular Tags</h2>
+          <h2 className="text-2xl font-bold my-4">Popular Tags</h2>
           <div className="bg-gray-20 p-4 rounded-lg shadow-md ">
             <Center>
               <TagCloud
@@ -260,9 +259,6 @@ export async function getStaticProps(ctx) {
       title: "Dashboard",
     },
   };
-}
-export function log(title = "LOG", message) {
-  console.log(title + " - ", message);
 }
 
 // export const BarChartImplement = ({ chartData }) => {
@@ -332,7 +328,6 @@ const Chart = ({ data }) => {
     Legend
   );
   const lables = data.map((item) => item.title);
-  log(null, lables);
   const chartData = {
     labels: lables,
     datasets: [
@@ -381,7 +376,6 @@ const ChartOfView = ({ data }) => {
     Legend
   );
   const labels = data.map((item) => item.title);
-  log(null, labels);
   const chartData = {
     labels: labels,
     datasets: [

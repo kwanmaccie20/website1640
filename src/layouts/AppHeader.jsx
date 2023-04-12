@@ -222,7 +222,7 @@ export default function AppHeader({
                 onClick={() =>
                   modals.open({
                     title: <b>My profile</b>,
-                    children: <UserInfo />,
+                    children: <UserInfo userId={user?.id} />,
                   })
                 }
               >

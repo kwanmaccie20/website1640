@@ -15,6 +15,9 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useUserProfile } from "@/hooks/userProfile";
 import { useUser } from "@supabase/auth-helpers-react";
 import { notifications } from "@mantine/notifications";
+import { IconX } from "@tabler/icons-react";
+import { modals } from "@mantine/modals";
+import UserInfo from "@/components/UserInfo";
 export default function Department() {
   const supabase = useSupabaseClient();
   const user = useUser();
@@ -36,18 +39,20 @@ export default function Department() {
         .eq("departments.id", profile?.departments?.id);
       //                     src={`https://i.pravatar.cc/150?u=${user.email}`}
       try {
-        console.log("Data", data);
         const matchFormat = data.map((val) => ({
           avatar: `https://i.pravatar.cc/150?u=${val.email}`,
           name: val.first_name + " " + val.last_name,
           job: val.gender,
           email: val.email,
           phone: val.phone,
+          id: val.id,
         }));
         setListStaff(matchFormat);
       } catch {
         notifications.show({
           title: "Error to get data",
+          color: "red",
+          icon: <IconX />,
         });
       }
     }
@@ -60,9 +65,18 @@ export default function Department() {
       <td>
         <Group spacing="sm">
           <Avatar size={30} src={item.avatar} radius={30} />
-          <Text fz="sm" fw={500}>
+          <Anchor
+            fz="sm"
+            fw={500}
+            onClick={() =>
+              modals.open({
+                title: <b>{item.name}&apos;s profile</b>,
+                children: <UserInfo userId={item.id} />,
+              })
+            }
+          >
             {item.name}
-          </Text>
+          </Anchor>
         </Group>
       </td>
 
@@ -101,3 +115,11 @@ export default function Department() {
 }
 
 Department.getLayout = (Page) => <AppLayout>{Page}</AppLayout>;
+
+export async function getStaticProps(ctx) {
+  return {
+    props: {
+      title: "Department",
+    },
+  };
+}

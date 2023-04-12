@@ -110,6 +110,7 @@ export default function AcademicYear() {
         <Text size="sm">Are you sure to delete {row.getValue("name")}?</Text>
       ),
       labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { color: "red" },
       onCancel: () => modals.closeAll(),
       onConfirm: async () => {
         const { error, data } = await supabase

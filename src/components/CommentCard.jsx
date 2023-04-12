@@ -87,7 +87,7 @@ export default function CommentCard({ comment, mutate }) {
       >
         <Group spacing={"sm"}>
           <Anchor>
-            <HoverCard shadow="md" openDelay={2000}>
+            <HoverCard shadow="md" openDelay={2000} withinPortal>
               <HoverCard.Target>
                 <Text className="font-medium">
                   {comment.is_anonymous

@@ -87,25 +87,28 @@ export default function Department() {
       confirmProps: { color: "red" },
       onCancel: () => modals.closeAll(),
       onConfirm: async () => {
-        const { error, data } = await supabase
+        const { error: coorErr, data: coorData } = await supabase
           .from("departments")
           .delete()
           .eq("id", row.original.id)
           .select("coordinator_id")
           .single();
-        if (data) {
-          const { error } = await supabase
+        if (coorData && coorData.coordinator_id) {
+          const { error, data } = await supabase
             .from("staff")
-            .update("role_id", 4)
-            .eq("id", data.coordinator_id);
+            .update({ role_id: 4 })
+            .eq("id", coorData.coordinator_id)
+            .select("id");
           if (error) {
+            console.log(error);
             notifications.show({
               title: "An error occurs",
               message: `Could not delete department information`,
               icon: <IconX />,
               color: "red",
             });
-          } else {
+          }
+          if (data) {
             modals.closeAll();
             mutate();
             notifications.show({
@@ -114,8 +117,8 @@ export default function Department() {
             });
           }
         }
-        if (error) {
-          console.log("delDept", error);
+        if (coorErr) {
+          console.log("delDept", coorErr);
           window.alert("Error occurs when delete");
         }
       },
@@ -351,7 +354,6 @@ function UpdateModal({ mutate, row }) {
       }
       if (data) {
         setStaff(data);
-        console.log(data);
       }
     })();
   }, [row.original.id, supabase]);
@@ -624,7 +626,6 @@ function StaffOfDepartment({ dId }) {
       .eq("departments.id", dId);
     //                     src={`https://i.pravatar.cc/150?u=${user.email}`}
     try {
-      console.log("Data", data);
       const matchFormat = data.map((val) => ({
         avatar: `https://i.pravatar.cc/150?u=${val.email}`,
         name: val.first_name + " " + val.last_name,
