@@ -1,0 +1,135 @@
+@startuml
+
+!define ENTITYMODIFIER abstract
+!define TABLE_GRID_STYLE solid
+!define MAX_TABLE_WIDTH 400
+
+hide circle
+hide empty members
+
+skinparam {
+    BackgroundColor #FFFFFF
+    ArrowColor #000000
+    BorderColor #000000
+    DefaultFontName Arial
+    DefaultFontSize 14
+}
+
+entity academic_year {
+    * id : int8 <<generated>>
+    --
+    created_at : timestamptz
+    name : text
+    description : text
+    is_enable : bool
+}
+
+entity campaigns {
+    * id : serial4
+    --
+    name : varchar(255)
+    closure_date : timestamptz
+    final_closure_date : timestamptz
+    created_at : timestamptz
+    academic_id : int8
+}
+
+entity comments {
+    * id : serial4
+    --
+    idea_id : int4
+    author_id : uuid
+    comment : text
+    created_at : timestamptz
+}
+
+entity departments {
+    * id : serial4
+    --
+    name : varchar(255) <<unique>>
+    coordinator_id : uuid
+    created_at : timestamptz
+}
+
+entity idea_documents {
+    * id : serial4
+    --
+    idea_id : int4
+    url : varchar(255)
+    created_at : timestamptz
+}
+
+entity ideas {
+    * id : serial4
+    --
+    title : varchar(255)
+    description : text
+    author_id : uuid
+    is_anonymous : bool
+    campaign_id : int4
+    created_at : timestamptz
+    tag_id : int8
+}
+
+entity notifications {
+    * id : int8 <<generated>>
+    --
+    created_at : timestamptz
+    staff_id : uuid
+    title : text
+    message : text
+    url : text
+}
+
+entity roles {
+    * id : serial4
+    --
+    name : varchar(255) <<unique>>
+    title : text <<unique>>
+    created_at : timestamptz
+}
+
+entity staff {
+    * id : uuid
+    --
+    first_name : varchar(255)
+    last_name : varchar(255)
+    email : varchar(255) <<unique>>
+    department_id : int4
+    created_at : timestamptz
+    role_id : int4
+    phone : text
+    gender : text
+    address : text
+}
+
+entity votes {
+    * id : serial4
+    --
+    idea_id : int4
+    voter_id : uuid
+    is_upvote : bool
+    created_at : timestamptz
+}
+
+entity tags {
+    * id : int8 <<generated>>
+    --
+    name : text <<unique>>
+}
+
+academic_year ||--|| campaigns : academic_id
+comments }|..|| ideas : idea_id
+comments }o..|| staff : author_id
+departments ||--o{ staff : coordinator_id
+idea_documents }|..|| ideas : idea_id
+ideas }o..|| staff : author_id
+ideas ||--|| campaigns : campaign_id
+ideas }--|| tags : tag_id
+notifications }o--|| staff : staff_id
+staff ||--o{ departments : department_id
+staff }o--|| roles : role_id
+votes }|..|| ideas : idea_id
+votes }o..|| staff : voter_id
+
+@enduml
