@@ -21,6 +21,8 @@ import {
   rem,
   Center,
   Stack,
+  useMantineTheme,
+  px,
 } from "@mantine/core";
 import { useState } from "react";
 import {
@@ -38,7 +40,8 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect } from "react";
 const useStyles = createStyles((theme) => ({
   root: {
-    padding: `calc(${theme.spacing.xl} * 1.5)`,
+    // padding: `calc(${theme.spacing.xl} * 1.5)`,
+    padding: "10px 5px",
   },
 
   value: {
@@ -74,6 +77,7 @@ const icons = {
 };
 
 export default function Dashboard() {
+  const theme = useMantineTheme();
   const [topIdea, setTopIdea] = useState([]);
   const [topView, setTopView] = useState([]);
   const [ideaCount, setIdeaCount] = useState(0);
@@ -233,12 +237,12 @@ export default function Dashboard() {
 
         <div>
           <h2 className="text-2xl font-bold my-4">Popular Tags</h2>
-          <div className="bg-gray-20 p-4 rounded-lg shadow-md ">
+          <div className="bg-gray-20 p-[2px] sm:p-2 md:p-4 rounded-lg shadow-md ">
             <Center>
               <TagCloud
                 tags={tags}
-                minSize={25}
-                maxSize={65}
+                minSize={px("1.5rem")}
+                maxSize={px("4rem")}
                 colorOptions={options}
               />
             </Center>

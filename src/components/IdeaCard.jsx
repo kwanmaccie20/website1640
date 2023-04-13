@@ -153,7 +153,11 @@ export default function IdeaCard({ idea, mutateIdea }) {
           leftIcon={<IconMessageCircle2 strokeWidth={1.5} color="gray" />}
           style={{ border: "none" }}
         >
-          <Text size={"sm"} className="font-medium" color="dimmed">
+          <Text
+            size={"sm"}
+            className="font-medium hidden xs:block"
+            color="dimmed"
+          >
             Comments
           </Text>
         </Button>

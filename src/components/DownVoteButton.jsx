@@ -89,7 +89,7 @@ export default function DownVoteButton({ idea }) {
         handleVote();
       }}
     >
-      <Text size={"sm"} className="font-medium" color="dimmed">
+      <Text size={"sm"} className="font-medium hidden xs:block" color="dimmed">
         Down vote
       </Text>
     </Button>
