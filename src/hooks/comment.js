@@ -6,7 +6,10 @@ export const useIdeaComment = (ideaId) => {
   const { data: comments, ...rest } = useSWR(`comment-${ideaId}`, async () => {
     const { data, error, count } = await supabase
       .from("comments")
-      .select("*, staff(id, first_name, last_name, email)", { count: "exact" })
+      .select(
+        "*, staff(id, first_name, last_name, email), ideas(campaigns(final_closure_date))",
+        { count: "exact" }
+      )
       .eq("idea_id", ideaId)
       .order("created_at", { ascending: false });
     if (error) {

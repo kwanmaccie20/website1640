@@ -15,6 +15,7 @@ import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { IconCheck, IconDots, IconX } from "@tabler/icons-react";
+import dayjs from "dayjs";
 import Image from "next/image";
 import React from "react";
 
@@ -122,32 +123,34 @@ export default function CommentCard({ comment, mutate }) {
           </Text>
         </Spoiler>
       </Card>
-      {comment.staff.id === user?.id && (
-        <Menu width={200}>
-          <Menu.Target>
-            <ActionIcon
-              variant="subtle"
-              className="self-center"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <IconDots strokeWidth={1} />
-            </ActionIcon>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDelete();
-              }}
-              color="red"
-            >
-              Delete
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-      )}
+      {comment.staff.id === user?.id &&
+        dayjs(comment.ideas.campaigns.final_closure_date) - dayjs(Date.now()) >
+          0 && (
+          <Menu width={200}>
+            <Menu.Target>
+              <ActionIcon
+                variant="subtle"
+                className="self-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <IconDots strokeWidth={1} />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete();
+                }}
+                color="red"
+              >
+                Delete
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        )}
     </div>
   );
 }

@@ -364,6 +364,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
     <Modal
       keepMounted={false}
       opened={open}
+      withinPortal
       onClose={() => {
         onClose();
         form.reset();
