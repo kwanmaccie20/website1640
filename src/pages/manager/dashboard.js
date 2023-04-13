@@ -1,7 +1,7 @@
 import AppLayout from "@/layouts/AppLayout";
 import React from "react";
 import { TagCloud } from "react-tagcloud";
-import { Bar } from "react-chartjs-2";
+import { Bar, getDatasetAtEvent } from "react-chartjs-2";
 
 import {
   Chart as ChartJS,
@@ -38,6 +38,9 @@ import {
 } from "@tabler/icons-react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect } from "react";
+import theme from "tailwindcss/defaultTheme";
+import { modals } from "@mantine/modals";
+import IdeaDetail from "@/components/IdeaDetail";
 const useStyles = createStyles((theme) => ({
   root: {
     // padding: `calc(${theme.spacing.xl} * 1.5)`,
@@ -88,7 +91,10 @@ export default function Dashboard() {
   const getTopView = async () => {
     const { data, error } = await supabase
       .from("ideas")
-      .select("id, title, views")
+      .select(
+        "*, staff!ideas_author_id_fkey(id, first_name, last_name, email), campaigns!inner(*, academic_year(*)), tags(*), idea_documents(*))",
+        { count: "exact" }
+      )
       .order("views", { ascending: false })
       .limit(10);
     try {
@@ -100,7 +106,10 @@ export default function Dashboard() {
   const getTopIdea = async () => {
     const { data, error } = await supabase
       .from("ideas")
-      .select("id, title, ranking_score")
+      .select(
+        "*, staff!ideas_author_id_fkey(id, first_name, last_name, email), campaigns!inner(*, academic_year(*)), tags(*), idea_documents(*))",
+        { count: "exact" }
+      )
       .order("ranking_score", { ascending: false })
       .limit(10);
     try {
@@ -265,63 +274,8 @@ export async function getStaticProps(ctx) {
   };
 }
 
-// export const BarChartImplement = ({ chartData }) => {
-//   // Extract the title and value from the data array
-//   const titles = chartData.map((item) => item.title);
-//   const values = chartData.map((item) => item.value);
-
-//   // Define the chart data
-//   const data = {
-//     labels: titles,
-//     datasets: [
-//       {
-//         label: "My First Dataset",
-//         data: values,
-//         backgroundColor: [
-//           "rgba(255, 99, 132, 0.2)",
-//           "rgba(255, 159, 64, 0.2)",
-//           "rgba(255, 205, 86, 0.2)",
-//           "rgba(75, 192, 192, 0.2)",
-//           "rgba(54, 162, 235, 0.2)",
-//           "rgba(153, 102, 255, 0.2)",
-//           "rgba(201, 203, 207, 0.2)",
-//         ],
-//         borderColor: [
-//           "rgb(255, 99, 132)",
-//           "rgb(255, 159, 64)",
-//           "rgb(255, 205, 86)",
-//           "rgb(75, 192, 192)",
-//           "rgb(54, 162, 235)",
-//           "rgb(153, 102, 255)",
-//           "rgb(201, 203, 207)",
-//         ],
-//         borderWidth: 1,
-//       },
-//     ],
-//   };
-
-//   const config = {
-//     type: "bar",
-//     data: data,
-//     options: {
-//       scales: {
-//         y: {
-//           beginAtZero: true,
-//         },
-//       },
-//     },
-//   };
-//   // Create a new chart object
-
-//   return (
-//     <div style={{ height: "400px", width: "400px" }}>
-//       {new BarChart(document.getElementById("chartjs"), { ...config })}
-//       <canvas id="chartjs" />
-//     </div>
-//   );
-// };
-
 const Chart = ({ data }) => {
+  const theme = useMantineTheme();
   // format the data for the chart
   ChartJS.register(
     CategoryScale,
@@ -331,14 +285,19 @@ const Chart = ({ data }) => {
     Tooltip,
     Legend
   );
-  const lables = data.map((item) => item.title);
+  // const lables = data.map((item) => item.title);
+  const labels = data.map((item) =>
+    item.title.length < 15 ? item.title : item.title.substring(0, 14) + "..."
+  );
+  const labels2 = data.map((item) => item.title);
+
   const chartData = {
-    labels: lables,
+    labels: labels,
     datasets: [
       {
         label: "Ranking Score",
         data: data.map((item) => item.ranking_score),
-        backgroundColor: "rgba(75,192,192,1)",
+        backgroundColor: theme.fn.primaryColor(),
       },
     ],
   };
@@ -346,6 +305,7 @@ const Chart = ({ data }) => {
   // options for the chart
 
   const options = {
+    indexAxis: "y",
     responsive: true,
     plugins: {
       legend: {
@@ -355,7 +315,26 @@ const Chart = ({ data }) => {
         display: true,
         text: "Top Popular Ideas",
       },
+      tooltip: {
+        callbacks: {
+          title: (tooltipItem, data) => {
+            return (labels2[tooltipItem[0].dataIndex]);
+          },
+        }
+      }
     },
+    onClick: (event, active) => {
+      if (active.length > 0) {
+        const index = active[0].index;
+        modals.open({
+          title: <strong>{data[index].title}</strong>,
+          size: "100%",
+          padding: "15px 15px 0 15px",
+          children: <IdeaDetail idea={data[index]}/>
+        })
+        console.log("You clicked on bar", data[index]);
+      }
+    }
   };
 
   return (
@@ -370,6 +349,7 @@ const Chart = ({ data }) => {
 };
 
 const ChartOfView = ({ data }) => {
+  const theme = useMantineTheme();
   // format the data for the chart
   ChartJS.register(
     CategoryScale,
@@ -379,14 +359,19 @@ const ChartOfView = ({ data }) => {
     Tooltip,
     Legend
   );
-  const labels = data.map((item) => item.title);
+  // const lables = data.map((item) => item.title);
+  const labels = data.map((item) =>
+    item.title.length < 15 ? item.title : item.title.substring(0, 14) + "..."
+  );
+  const labels2 = data.map((item) => item.title);
+
   const chartData = {
     labels: labels,
     datasets: [
       {
-        label: "Views",
+        label: "View Count",
         data: data.map((item) => item.views),
-        backgroundColor: "rgba(75,192,192,1)",
+        backgroundColor: theme.fn.primaryColor(),
       },
     ],
   };
@@ -394,6 +379,7 @@ const ChartOfView = ({ data }) => {
   // options for the chart
 
   const options = {
+    indexAxis: "y",
     responsive: true,
     plugins: {
       legend: {
@@ -403,7 +389,26 @@ const ChartOfView = ({ data }) => {
         display: true,
         text: "Top View Ideas",
       },
+      tooltip: {
+        callbacks: {
+          title: (tooltipItem, data) => {
+            return (labels2[tooltipItem[0].dataIndex]);
+          },
+        }
+      }
     },
+    onClick: (event, active) => {
+      if (active.length > 0) {
+        const index = active[0].index;
+        modals.open({
+          title: <strong>{data[index].title}</strong>,
+          size: "100%",
+          padding: "15px 15px 0 15px",
+          children: <IdeaDetail idea={data[index]}/>
+        })
+        console.log("You clicked on bar", data[index]);
+      }
+    }
   };
 
   return (

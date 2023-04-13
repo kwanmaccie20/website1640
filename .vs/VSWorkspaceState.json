@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\layouts",
+    "\\src\\libs",
+    "\\src\\pages",
+    "\\src\\pages\\manager",
+    "\\src\\styles"
+  ],
+  "SelectedNode": "\\src\\pages\\manager\\dashboard.js",
+  "PreviewInSolutionExplorer": false
+}

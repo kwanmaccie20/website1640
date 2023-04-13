@@ -109,8 +109,8 @@ export default function Tags() {
   // };
   const handleUpdateRow = (table, row) => {
     modals.open({
-      title: "Update the campaign",
-      children: <UpdateExistCampaignModal table={table} row={row} />,
+      title: "Update the tag",
+      children: <UpdateExistTagModal table={table} row={row} />,
       modalId: "THIS2010",
     });
   };
@@ -122,7 +122,7 @@ export default function Tags() {
   //Ok-Edit
   const handleDeleteRow = (row) => {
     modals.openConfirmModal({
-      title: "Close Campaign Now?",
+      title: "Delete this tag?",
       children: (
         <Text size="sm">
           Are you sure to delete this tag{" "}
@@ -172,7 +172,7 @@ export default function Tags() {
           }
           if (error) {
             notifications.show({
-              title: "Error occurs when close the tag.",
+              title: "Error occurs when delete the tag.",
               message: "",
               icon: <IconX />,
               color: "red",
@@ -226,7 +226,7 @@ export default function Tags() {
                 <IconEdit />
               </ActionIcon>
             </Tooltip>
-            <Tooltip withArrow position="right" label="Close Campaign">
+            <Tooltip withArrow position="right" label="Delete tag">
               <ActionIcon color="red" onClick={() => handleDeleteRow(row)}>
                 <IconTrash />
               </ActionIcon>
@@ -313,7 +313,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
   );
 };
 //Ok-Edit
-export const UpdateExistCampaignModal = ({ table, row }) => {
+export const UpdateExistTagModal = ({ table, row }) => {
   const supabase = useSupabaseClient();
   const form = useForm({
     initialValues: {
