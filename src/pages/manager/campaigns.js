@@ -364,7 +364,6 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
     <Modal
       keepMounted={false}
       opened={open}
-      withinPortal
       onClose={() => {
         onClose();
         form.reset();
@@ -405,6 +404,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
           <Select
             required
             withAsterisk
+            withinPortal
             data={academic.map((a) => ({ label: a?.name, value: a?.id }))}
             label="Academic Year"
             {...form.getInputProps("academic_id")}
