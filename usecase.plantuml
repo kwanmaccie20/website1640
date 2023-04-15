@@ -1,0 +1,73 @@
+@startuml
+left to right direction
+
+actor Staff
+actor QA_Coordinator
+actor Administrator
+
+package "NEXT UNI."{
+(Login) as UC1
+(View Ideas) as UC2
+(Submit Idea) as UC3 
+(Comment on Idea) as UC4
+(Thumbs Up)  as UC5
+(Thumbs Down) as UC6
+(Update idea) as UC7
+(Receive notification) as UC8
+(Manage Academic Year) as UC9
+(Manage Staff Information) as U10
+(Manage Campaign) as U11
+(Add Academic Year) as UC9_1
+(Update Academic Year) as UC9_2
+(Delete Academic Year) as UC9_3
+(Add Staff Information) as U10_1
+(Update Staff Information) as U10_2
+(Delete Staff Information) as U10_3
+(Update Campaign) as U11_2
+(Add Campaign)  as U11_1
+(Delete Campaign) as U11_3
+(View Comments) as UC2_1
+(Reply to Comment) as UC2_1_1
+(Mark as Anonymous) as UC2_1_1_1
+(Submit as Anonymous) as UC3_1
+
+
+Staff -- UC1
+Staff -- UC2
+Staff -- UC3
+Staff -- UC4
+Staff -- (Thumbs Up)
+Staff -- UC6
+Staff -- UC7
+Staff -- UC8
+Staff <|-up- QA_Coordinator
+
+Administrator -- UC2
+Administrator -- UC9
+Administrator -- UC1
+Administrator -- U10
+Administrator -- U11
+Administrator -- (View Stats)
+
+UC3 <.. (Upload Documents) : <<extends>>
+UC3 ..> (Select Campaign) : <<includes>>
+
+
+
+
+UC2 <.. UC2_1 : <<extends>>
+UC2_1 <.. UC2_1_1 : <<extends>>
+UC4 <.. UC2_1_1_1 : <<extends>> 
+UC2_1_1 <.. UC2_1_1_1 : <<extends>> 
+UC9 <.. UC9_1 : <<extends>>
+UC9 <.. UC9_2 : <<extends>>
+UC9 <.. UC9_3 : <<extends>>
+U10 <.. U10_1 : <<extends>>
+U10 <.. U10_2 : <<extends>>
+U10 <.. U10_3 : <<extends>>
+U11 <.. U11_2 : <<extends>>
+U11 <.. U11_1 : <<extends>>
+U11 <.. U11_3 : <<extends>>
+UC3 <.. UC3_1 : <<extends>>
+}
+@enduml
