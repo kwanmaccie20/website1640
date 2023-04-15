@@ -148,9 +148,7 @@ export default function Tags() {
         if (checkIdeaTag.length > 0) {
           notifications.show({
             title:
-              "This tag has being used. Please remove all idea before delete this tag.",
-            message:
-              "This tag has being used. Please remove all idea before delete this tag.",
+              "This tag has being used. Please remove all ideas of this tag before deleting",
             icon: <IconX />,
             color: "red",
           });
