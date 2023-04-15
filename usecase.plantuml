@@ -27,10 +27,13 @@ package "NEXT UNI."{
 (Add Campaign)  as U11_1
 (Delete Campaign) as U11_3
 (View Comments) as UC2_1
-(Reply to Comment) as UC2_1_1
+' (Reply to Comment) as UC2_1_1
 (Mark as Anonymous) as UC2_1_1_1
 (Submit as Anonymous) as UC3_1
-
+(View staff member) as UC12 
+(View Idea of department ) as UC13 
+(Mange ideas) as UC14 
+(Mange tags) as UC15 
 
 Staff -- UC1
 Staff -- UC2
@@ -42,12 +45,17 @@ Staff -- UC7
 Staff -- UC8
 Staff <|-up- QA_Coordinator
 
+QA_Coordinator -- UC12
+QA_Coordinator -- UC13
+
 Administrator -- UC2
 Administrator -- UC9
 Administrator -- UC1
 Administrator -- U10
 Administrator -- U11
 Administrator -- (View Stats)
+Administrator -- UC14
+Administrator -- UC15
 
 UC3 <.. (Upload Documents) : <<extends>>
 UC3 ..> (Select Campaign) : <<includes>>
@@ -56,9 +64,9 @@ UC3 ..> (Select Campaign) : <<includes>>
 
 
 UC2 <.. UC2_1 : <<extends>>
-UC2_1 <.. UC2_1_1 : <<extends>>
+' UC2_1 <.. UC2_1_1 : <<extends>>
 UC4 <.. UC2_1_1_1 : <<extends>> 
-UC2_1_1 <.. UC2_1_1_1 : <<extends>> 
+' UC2_1_1 <.. UC2_1_1_1 : <<extends>> 
 UC9 <.. UC9_1 : <<extends>>
 UC9 <.. UC9_2 : <<extends>>
 UC9 <.. UC9_3 : <<extends>>
