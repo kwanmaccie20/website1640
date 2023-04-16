@@ -257,7 +257,12 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
 
   return (
     <Modal opened={open} onClose={onClose} title="Add New Academic Year">
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
         <Stack
           sx={{
             width: "100%",
@@ -271,19 +276,19 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
               onChange={(e) =>
                 setValues({ ...values, [e.target.name]: e.target.value })
               }
-              required={(column.accessorKey = "name")}
+              required={column.accessorKey == "name" ? true : false}
             />
           ))}
         </Stack>
+        <Group position="right" mt={"lg"}>
+          <Button onClick={onClose} variant="subtle">
+            Cancel
+          </Button>
+          <Button color="teal" type="submit" variant="filled">
+            Create
+          </Button>
+        </Group>
       </form>
-      <Group position="right" mt={"lg"}>
-        <Button onClick={onClose} variant="subtle">
-          Cancel
-        </Button>
-        <Button color="teal" onClick={handleSubmit} variant="filled">
-          Create
-        </Button>
-      </Group>
     </Modal>
   );
 };
