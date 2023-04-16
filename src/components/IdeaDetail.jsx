@@ -15,6 +15,7 @@ import {
   Stack,
   Text,
   TextInput,
+  TypographyStylesProvider,
   UnstyledButton,
   useMantineTheme,
 } from "@mantine/core";
@@ -125,10 +126,12 @@ export default function IdeaDetail({ idea }) {
           </Badge>
         </Group>
 
-        <Text size="md" className="font-medium">
+        <Text size="md" className="font-medium" mb={"sm"}>
           {idea.title}
         </Text>
-        <Text mb="sm">{idea.description}</Text>
+        <Text mb="sm" className=" whitespace-pre-line">
+          {idea.description}
+        </Text>
         <div className="flex flex-col mb-1">
           {idea.idea_documents.map((d, i) => (
             <FileData key={i} url={d.url} fileName={d.file_name} index={i} />
