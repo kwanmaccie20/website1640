@@ -43,13 +43,14 @@ export default function Home() {
       const { data, error } = await supabase
         .from("campaigns")
         .select("id, name")
-        .gte("final_closure_date", new Date(Date.now()).toISOString());
+        .gte("final_closure_date", new Date(Date.now()).toISOString())
+        .order("id", { ascending: false });
       if (error) {
         console.log(error);
         throw new Error(error.message);
       }
       if (data) {
-        setCampaignData([...data, { id: 0, name: "All campaigns" }]);
+        setCampaignData([{ id: 0, name: "All campaigns" }, ...data]);
       }
     })();
   }, [supabase]);
