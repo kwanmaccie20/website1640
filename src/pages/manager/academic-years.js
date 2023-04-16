@@ -121,7 +121,7 @@ export default function AcademicYear() {
           .single();
         if (data) {
           notifications.show({
-            title: "Academic year updated successfully",
+            title: "Academic year deleted successfully",
             icon: <IconCheck />,
           });
           modals.closeAll();
@@ -271,6 +271,7 @@ export const CreateNewModal = ({ open, columns, onClose, onSubmit }) => {
               onChange={(e) =>
                 setValues({ ...values, [e.target.name]: e.target.value })
               }
+              required={(column.accessorKey = "name")}
             />
           ))}
         </Stack>

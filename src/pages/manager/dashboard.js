@@ -1,7 +1,8 @@
 import AppLayout from "@/layouts/AppLayout";
 import React from "react";
 import { TagCloud } from "react-tagcloud";
-import { Bar, getDatasetAtEvent } from "react-chartjs-2";
+import { Bar, Doughnut, Pie, getDatasetAtEvent } from "react-chartjs-2";
+import autocolors from "chartjs-plugin-autocolors";
 
 import {
   Chart as ChartJS,
@@ -11,6 +12,8 @@ import {
   Title,
   Tooltip,
   Legend,
+  ArcElement,
+  Colors,
 } from "chart.js";
 import {
   createStyles,
@@ -86,6 +89,10 @@ export default function Dashboard() {
   const [ideaCount, setIdeaCount] = useState(0);
   const [staffCount, setStaffCount] = useState(0);
   const [departmentCount, setDepartmentCount] = useState(0);
+  const [departmentIdeaContributor, setDepartmentIdeaContributor] = useState(
+    []
+  );
+
   const [tags, setTags] = useState([]);
   const supabase = useSupabaseClient();
   const getTopView = async () => {
@@ -158,6 +165,16 @@ export default function Dashboard() {
       console.log(error);
     }
   };
+  const getDepartmentIdeaContributor = async () => {
+    const { data, error } = await supabase
+      .rpc("count_contributors_and_ideas_by_department")
+      .select("*");
+    try {
+      setDepartmentIdeaContributor(data);
+    } catch (e) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     getForWordCloud();
     getDepartmentCount();
@@ -165,6 +182,7 @@ export default function Dashboard() {
     getStaffCount();
     getTopIdea();
     getTopView();
+    getDepartmentIdeaContributor();
   }, []);
 
   const options = {
@@ -183,13 +201,13 @@ export default function Dashboard() {
       title: "STAFF",
       icon: "coin",
       value: staffCount,
-      diff: "in university",
+      diff: "in the university",
     },
     {
       title: "DEPARTMENT",
       icon: "discount",
       value: departmentCount,
-      diff: "in company",
+      diff: "in the university",
     },
     // {
     //   title: "New customers",
@@ -201,7 +219,7 @@ export default function Dashboard() {
   const { classes } = useStyles();
   const stats = data.map((stat) => {
     const Icon = icons[stat.icon];
-    const DiffIcon = stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
+    // const DiffIcon = stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
 
     return (
       <Paper withBorder p="md" radius="md" key={stat.title}>
@@ -233,6 +251,8 @@ export default function Dashboard() {
       >
         {stats}
       </SimpleGrid>
+
+      <PieCharts data={departmentIdeaContributor} />
 
       <Stack>
         <div className="">
@@ -318,10 +338,10 @@ const Chart = ({ data }) => {
       tooltip: {
         callbacks: {
           title: (tooltipItem, data) => {
-            return (labels2[tooltipItem[0].dataIndex]);
+            return labels2[tooltipItem[0].dataIndex];
           },
-        }
-      }
+        },
+      },
     },
     onClick: (event, active) => {
       if (active.length > 0) {
@@ -330,11 +350,11 @@ const Chart = ({ data }) => {
           title: <strong>{data[index].title}</strong>,
           size: "100%",
           padding: "15px 15px 0 15px",
-          children: <IdeaDetail idea={data[index]}/>
-        })
+          children: <IdeaDetail idea={data[index]} />,
+        });
         console.log("You clicked on bar", data[index]);
       }
-    }
+    },
   };
 
   return (
@@ -392,10 +412,10 @@ const ChartOfView = ({ data }) => {
       tooltip: {
         callbacks: {
           title: (tooltipItem, data) => {
-            return (labels2[tooltipItem[0].dataIndex]);
+            return labels2[tooltipItem[0].dataIndex];
           },
-        }
-      }
+        },
+      },
     },
     onClick: (event, active) => {
       if (active.length > 0) {
@@ -404,11 +424,11 @@ const ChartOfView = ({ data }) => {
           title: <strong>{data[index].title}</strong>,
           size: "100%",
           padding: "15px 15px 0 15px",
-          children: <IdeaDetail idea={data[index]}/>
-        })
+          children: <IdeaDetail idea={data[index]} />,
+        });
         console.log("You clicked on bar", data[index]);
       }
-    }
+    },
   };
 
   return (
@@ -419,5 +439,78 @@ const ChartOfView = ({ data }) => {
       data={chartData}
       options={options}
     />
+  );
+};
+
+const PieCharts = ({ data }) => {
+  ChartJS.register(ArcElement, Legend, Tooltip, autocolors);
+  const chartDataPercentage = {
+    labels: data.map((d) => d.department_name),
+    datasets: [
+      {
+        label: "# of Ideas",
+        data: data.map((d) => d.ideas_count),
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+  const chartDataContributor = {
+    labels: data.map((d) => d.department_name),
+    datasets: [
+      {
+        label: "# of Contributors",
+        data: data.map((d) => d.contributors_count),
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+  return (
+    <Group position="center" align="center" mt="sm">
+      <div className="">
+        <h2 className="text-2xl font-bold my-4">Ideas per Department</h2>
+        {/* <Chart data={topIdea} /> */}
+        <Doughnut data={chartDataPercentage} width={"300px"} height={"300px"} />
+      </div>
+      <div className="">
+        <h2 className="text-2xl font-bold my-4">Contributors per Department</h2>
+        <Doughnut
+          data={chartDataContributor}
+          width={"300px"}
+          height={"300px"}
+        />
+      </div>
+    </Group>
   );
 };
